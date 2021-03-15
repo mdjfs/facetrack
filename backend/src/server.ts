@@ -9,11 +9,11 @@ import recognition from "./helpers/recognition";
 
 const app = express();
 
+app.set('trust proxy', true);
 app.use(cors())
 app.use(express.json());
 app.use(passport.initialize());
 app.use(router);
-
 
 passport.use(middleware);
 

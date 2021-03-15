@@ -1,5 +1,6 @@
 import database from "../database";
-import FaceManager, { FaceT } from "./face";
+import User from "../database/models/user";
+import FaceManager, { FaceT } from "./recognition";
 import { UserTarget } from "./user";
 
 const {models} = database;
@@ -11,12 +12,13 @@ interface PersonData{
     surnames: string,
 }
 
-async function find(faceManager: FaceManager, targetFace: FaceT, user: UserTarget){
-    const faces = await Face.findAll({ where: { userId: user.id }});
+async function find(faceManager: FaceManager, targetFace: FaceT, userTarget: UserTarget){
+    const user = await User.findOne({ where: { id: userTarget.id }})
+    const faces = await Face.findAll({ include: { model: Person, where: { userId: user.id } } });
     let personId: number = null;
     for(const face of faces){
-        const isRecognized = await faceManager.compareFaces(face.image, targetFace.buffer);
-        if(isRecognized){
+        const [isRecognized, distance] = await faceManager.compareFaces(face.image, targetFace.buffer);
+        if(isRecognized && distance <= 0.5){
             personId = face.personId;
             break;
         }
@@ -26,7 +28,7 @@ async function find(faceManager: FaceManager, targetFace: FaceT, user: UserTarge
         person = await Person.findOne({ where: {id: personId}});
     }
     else{
-        person = await Person.create({registered: false});
+        person = await Person.create({registered: false, userId: user.id});
     }
     await Face.create({image: targetFace.buffer, mimetype: targetFace.mimetype, personId: person.id});
     return person;

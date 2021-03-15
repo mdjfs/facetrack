@@ -7,6 +7,7 @@ import Detection from "../helpers/detection";
 import Person from "../helpers/person";
 import Face from "../helpers/face";
 import { forgetClient, rememberClient } from "../controllers/video";
+import Camera from "../helpers/camera";
 
 
 const router = express.Router();
@@ -173,14 +174,46 @@ router.delete('/face', auth, async (req: UserRequest, res) => {
 })
 
 
-router.post('/cameras/listen', auth, (req: UserRequest, res) => {
-    rememberClient(req.ip, req.user);
-    res.sendStatus(200);
+router.get('/cameras', auth, async (req: UserRequest, res) => {
+    try{
+        const cameras = await Camera.getAll(req.user);
+        res.status(200).send(cameras);
+    }catch(e){
+        res.status(500).send(e.message);
+    }
 })
 
-router.post('/cameras/forget', auth, (req: UserRequest, res) => {
-    forgetClient(req.ip);
-    res.sendStatus(200);
+router.post('/cameras', auth, async (req: UserRequest, res) => {
+    try{
+        await Camera.create(req.body.name, req.user);
+        res.sendStatus(200);
+    }catch(e){
+        res.status(500).send(e.message);
+    }
+})
+
+router.put('/cameras', auth, async (req: UserRequest, res) => {
+    try{
+        if(req.query.id){
+            const id = parseInt(req.query.id.toString());
+            await Camera.update(id, req.body.name, req.user);
+            res.sendStatus(200);
+        }else res.sendStatus(500);
+    }catch(e){
+        res.status(500).send(e.message);
+    }
+})
+
+router.delete('/cameras', auth, async (req: UserRequest, res) => {
+    try{
+        if(req.query.id){
+            const id = parseInt(req.query.id.toString());
+            await Camera.del(id, req.user);
+            res.sendStatus(200);
+        }else res.sendStatus(500);
+    }catch(e){
+        res.status(500).send(e.message);
+    }
 })
 
 export default router;

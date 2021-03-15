@@ -7,8 +7,7 @@
     "start": "npm run start:prod",
     "start:prod": "npx ts-node src/server.ts",
     "start:dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'npx ts-node' src/server.ts",
-    "db": "npx ts-node src/database/cli.ts",
-    "reset:default": "npm run db restart && npm run db admin 123456 && npm run db add-input check && npm run db add-input checkbox && npm run db add-input input && npm run db add-input radiobox"
+    "db": "npx ts-node src/database/cli.ts"
   },
   "author": "",
   "license": "ISC",
@@ -38,6 +37,7 @@
     "passport": "^0.1.18",
     "passport-jwt": "^4.0.0",
     "pg": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "sequelize": "^6.5.0",
     "sequelize-typescript": "^2.1.0",

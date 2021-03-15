@@ -11,11 +11,12 @@ const { Detection } = models;
 
 interface DetectionData{
     since: Date,
-    until: Date
+    until: Date,
+    cameraId: number
 }
 
 async function create(data: DetectionData, personId: number){
-    await Detection.create({ since: data.since, until: data.until, personId: personId});
+    await Detection.create({ since: data.since, until: data.until, cameraId: data.cameraId, personId: personId});
 }
 
 async function update(id: number, until: Date){

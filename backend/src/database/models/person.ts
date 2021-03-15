@@ -1,5 +1,5 @@
 
-import { Table, Column, Model, ForeignKey, BelongsTo,  Default, HasMany } from "sequelize-typescript";
+import { Table, Column, Model, ForeignKey, BelongsTo,  Default, HasMany, AllowNull } from "sequelize-typescript";
 import Detection from "./detection";
 import Face from "./face";
 import User from "./user";
@@ -9,6 +9,7 @@ export default class Person extends Model{
 
 
     @ForeignKey(() => User)
+    @AllowNull(false)
     @Column
     userId: number
 
@@ -21,15 +22,18 @@ export default class Person extends Model{
     @HasMany(() => Detection, {onDelete: "CASCADE"})
     detections: Detection[]
 
-    @Column
+    
     @Default("unknown")
+    @Column
     names: string
 
-    @Column
+    
     @Default("unknown")
+    @Column
     surnames: string
 
     @Default(false)
+    @Column
     registered: boolean
 
 

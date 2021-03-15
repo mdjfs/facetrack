@@ -11,6 +11,8 @@
  import { FaceDetection } from "face-api.js";
  
  import sharp from "sharp";
+
+ import path from "path";
  
  
  interface cropOpts{
@@ -25,7 +27,7 @@
     format: "buffer"|"detection"
 }
  
-
+const networksPath = path.join(__dirname, "../networks");
  
  
  export {FaceT, getFacesOpts, cropOpts, FaceManager};
@@ -77,9 +79,9 @@
          const {ssdMobilenetv1, faceLandmark68Net, faceRecognitionNet} = faceapi.nets;
          // neural networks type extends of NeuralNetwork<NetParams> from tfjs-image-recognition-base
          await Promise.all([
-             ssdMobilenetv1.loadFromDisk("../networks/ssd_mobilenetv1"),
-             faceLandmark68Net.loadFromDisk("../networks/face_landmark_68"),
-             faceRecognitionNet.loadFromDisk("../networks/face_recognition")
+             ssdMobilenetv1.loadFromDisk(path.join(networksPath, "./ssd_mobilenetv1")),
+             faceLandmark68Net.loadFromDisk(path.join(networksPath, "./face_landmark_68")),
+             faceRecognitionNet.loadFromDisk(path.join(networksPath, "./face_recognition"))
          ]);
          this.hasInit = true;
      }
@@ -101,13 +103,14 @@
      }
      
      /** compare two faces */
-     async compareFaces(input:Buffer, target: Buffer): Promise<boolean>{
+     async compareFaces(input:Buffer, target: Buffer): Promise<[boolean, number]>{
          if(!this.hasInit) throw new Error("FaceManager isn't initialized.");
          const decodedInput =  this.getImage(input);
          const decodedTarget =  this.getImage(target);
          const detectInput = await faceapi.detectSingleFace(decodedInput).withFaceLandmarks().withFaceDescriptor();
          const detectTarget = await faceapi.detectSingleFace(decodedTarget).withFaceLandmarks().withFaceDescriptor();
          const matcher = new faceapi.FaceMatcher(detectInput);
-         return matcher.findBestMatch(detectTarget.descriptor).label !== "unknown";
+         const match = matcher.findBestMatch(detectTarget.descriptor);
+         return [match.label !== "unknown", match.distance];
      }
  };

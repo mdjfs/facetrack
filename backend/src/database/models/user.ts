@@ -2,6 +2,7 @@ import hasha from "hasha";
 import Role from "./role";
 import { Table, Column, Model, ForeignKey, Unique,  BelongsTo, HasMany } from "sequelize-typescript";
 import Person from "./person";
+import Camera from "./camera";
 
 @Table({timestamps: true, tableName: "user", freezeTableName: true})
 export default class User extends Model{
@@ -12,6 +13,9 @@ export default class User extends Model{
 
     @HasMany(() => Person, {onDelete: "CASCADE"})
     persons: Person[]
+
+    @HasMany(() => Camera, {onDelete: "CASCADE"})
+    cameras: Camera[]
 
     @ForeignKey(() => Role)
     @Column

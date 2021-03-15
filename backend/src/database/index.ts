@@ -10,6 +10,7 @@ import config from "../config";
 import Person from "./models/person";
 import Face from "./models/face";
 import Detection from "./models/detection";
+import Camera from "./models/camera";
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -29,7 +30,7 @@ async function createDatabase(){
  * @returns {Array[Sequelize, Models]}
  */
 function getDatabase(){
-    const models = [Role, User, Person, Face, Detection];
+    const models = [Role, User, Person, Face, Detection, Camera];
     const sequelize = new Sequelize(databaseConfig);
     sequelize.addModels(models);
     return {
@@ -39,7 +40,8 @@ function getDatabase(){
             User: User,
             Face: Face,
             Detection: Detection,
-            Person: Person
+            Person: Person,
+            Camera: Camera
         }
     };
 }
