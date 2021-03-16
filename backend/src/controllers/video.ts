@@ -4,6 +4,7 @@ import dgram from "dgram";
 import {FaceManager, FaceT} from "../helpers/recognition";
 import personHelper from "../helpers/person";
 import detectionHelper from "../helpers/detection";
+import faceHelper from "../helpers/face";
 import jwt from "jsonwebtoken";
 import config from "../config";
 
@@ -46,7 +47,6 @@ function forgetClient(ip: string){
 }
 
 function trackImage(frames: Frame[], cameraId: number, client: Client){
-    console.log(frames.length, frames[0].total);
     if(frames.length == frames[0].total){
         const buffer = Buffer.concat(frames.map(frame => Buffer.from(frame.buffer["data"])));
         const mimetype = frames[0].mimetype;
@@ -70,10 +70,11 @@ function closeStream(cameraId: number, user: User){
 
 async function loadImage(buffer: Buffer, mimetype: string, cameraId: number, client: Client){
     if(faceManager){
-        const faces = await faceManager.getFaces(buffer, {format: "buffer", mimetype: mimetype});
+        const faces: FaceT[] = await faceManager.getFaces(buffer, {format: "buffer", mimetype: mimetype});
         const date = new Date();
         for(const face of faces){
-            const person = await personHelper.find(faceManager, face as FaceT, client.data);
+            const person = await personHelper.find(faceManager, face as FaceT, { id: client.data.id });
+            faceHelper.create(face, person.id, { id: client.data.id });
             const detections = await detectionHelper.getPersonDetections(person.id);
             let updated = false;
             for(const detection of detections){
@@ -125,7 +126,6 @@ function init(instance: FaceManager, port: number){
     server.on("message", async (msg: Buffer, rinfo: dgram.RemoteInfo) => {
         const request: Frame = JSON.parse(msg.toString());
         const id = await decodeToken(request.token);
-        console.log(request.index);
         if(id){
             switch(request.mode){
                 case "start":

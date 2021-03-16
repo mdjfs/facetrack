@@ -24,5 +24,9 @@ async function del(id: number, user: UserTarget){
 
 }
 
-export default {create, del};
-export {create, del};
+async function getByPerson(personId: number){
+    return await Face.findAll({ where: { personId: personId }});
+}
+
+export default {create, del, getByPerson};
+export {create, del, getByPerson};

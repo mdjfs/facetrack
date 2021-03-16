@@ -1,37 +1,39 @@
 import database from "../database";
-import User from "../database/models/user";
 import FaceManager, { FaceT } from "./recognition";
 import { UserTarget } from "./user";
+import Face from "./face";
 
 const {models} = database;
 
-const {Face, Person} = models;
+const {Person} = models;
 
 interface PersonData{
     names: string,
     surnames: string,
 }
 
-async function find(faceManager: FaceManager, targetFace: FaceT, userTarget: UserTarget){
-    const user = await User.findOne({ where: { id: userTarget.id }})
-    const faces = await Face.findAll({ include: { model: Person, where: { userId: user.id } } });
-    let personId: number = null;
-    for(const face of faces){
-        const [isRecognized, distance] = await faceManager.compareFaces(face.image, targetFace.buffer);
-        if(isRecognized && distance <= 0.5){
-            personId = face.personId;
+async function find(faceManager: FaceManager, targetFace: FaceT, user: UserTarget){
+    const persons = await Person.findAll({ where: { userId: user.id  } });
+    let find = null;
+    for(const person of persons){
+        const faces = await Face.getByPerson(person.id);
+        let facesMatch = 0, totalFaces = faces.length;
+        for(const face of faces){
+            const [isRecognized, distance] = await faceManager.compareFaces(face.image, targetFace.buffer);
+            if(isRecognized && distance <= 0.5){
+                facesMatch++;
+            }
+        }
+        const probability = facesMatch / totalFaces;
+        if(probability >= 0.5){
+            find = person;
             break;
         }
     }
-    let person = null;
-    if(personId){
-        person = await Person.findOne({ where: {id: personId}});
+    if(!find){
+       find = await Person.create({ registered: false, userId: user.id }); 
     }
-    else{
-        person = await Person.create({registered: false, userId: user.id});
-    }
-    await Face.create({image: targetFace.buffer, mimetype: targetFace.mimetype, personId: person.id});
-    return person;
+    return find;
 }
 
 async function create(person: PersonData, user: UserTarget){

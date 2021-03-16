@@ -8,7 +8,7 @@ import User from "./user";
 export default class Camera extends Model{
 
 
-    @HasMany(() => Detection)
+    @HasMany(() => Detection, {onDelete: "CASCADE"})
     detections: Detection[]
 
     @AllowNull(false)
