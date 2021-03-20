@@ -1,0 +1,80 @@
+
+.button-wrapper.primary{
+    filter: drop-shadow(3px 5px 3px #95d2fdab);
+}
+  
+button.primary{
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 96% 100%, 0 100%, 0% 50%);
+    color: white;
+    border: none;
+    font-size: 1.5em;
+    padding: 1% 5% 1% 5%;
+    outline: none;
+    cursor: pointer;
+    position:relative;
+    background-color: #95D1FD;
+    text-transform: uppercase;
+    margin: 1%;
+}
+
+button.primary:focus:after{
+    content: "";
+    position:absolute;
+    border-radius:50%;
+    background-color: rgba(255,255,255,0.4);
+    animation: circle ease-in 0.5s forwards;
+}
+
+@keyframes circle{
+    0%{
+        left:0%;
+        top:0%;
+        width:0%;
+        height:0%;
+    }
+    50%{
+        left:-50%;
+        top:-100%;
+        width:200%;
+        height:400%;
+    }
+    100%{
+        left:0%;
+        top:0%;
+        width:0%;
+        height:0%;
+    }
+}
+
+.button-wrapper.secondary{
+    filter: drop-shadow(3px 4px 2px rgba(0, 0, 0, 0.178));
+}
+
+.button-wrapper.secondary:hover{
+    filter: drop-shadow(3px 4px 2px #95D1FD);
+}
+
+
+button.secondary{
+    border: none;
+    font-size: 1.5em;
+    padding: 1% 5% 1% 5%;
+    outline: none;
+    cursor: pointer;
+    position:relative;
+    color: #7a7a7a;
+    background:none;
+    text-transform: uppercase;
+    margin: 1%;
+}
+
+button.secondary::after{
+    content:"";
+    width:100%;
+    height:100%;
+    left:0;
+    top:0;
+    position:absolute;
+    clip-path: polygon(96% 100%, 100% 86%, 100% 0, 0% 1%, 0 3%, 99.5% 3%, 99.5% 86%, 95% 98%, 1% 98%, 1% 0, 0 0, 0 100%);
+    background-color: #95D1FD;
+}

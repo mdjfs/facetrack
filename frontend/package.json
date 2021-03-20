@@ -34,8 +34,13 @@
   "author": "Marcos Fuenmayor",
   "license": "MIT",
   "dependencies": {
+    "electron-store": "^7.0.2",
+    "i18next": "^19.9.2",
+    "json-loader": "^0.5.7",
+    "raw-loader": "^4.0.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-i18next": "^11.8.10",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0"
   },

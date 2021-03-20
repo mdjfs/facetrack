@@ -6,7 +6,6 @@ import User from "../controllers/user";
 import Detection from "../helpers/detection";
 import Person from "../helpers/person";
 import Face from "../helpers/face";
-import { forgetClient, rememberClient } from "../controllers/video";
 import Camera from "../helpers/camera";
 
 
@@ -49,7 +48,7 @@ router.get('/user/all', auth, async (req: UserRequest, res) => {
 
 router.post('/user', async (req, res) => {
     try{
-        const token = await User.register(req.body);
+        const token = req.body["isGuest"] ? await User.createGuest() : await User.register(req.body);
         res.status(200).send(token);
     }catch(e){
         res.status(500).send(e.message);

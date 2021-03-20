@@ -1,0 +1,54 @@
+.scale-button button{
+    transform: scale(1.5);
+    margin: 5%;
+    width: 60%;
+}
+
+.margin-top{
+    margin-top: 15%;
+}
+
+.link-right{
+    right: 10%;
+    position: absolute;
+}
+
+.home-modal{
+    width: 80%;
+    position: fixed;
+    left: 10%;
+    height: 58%;
+    top: 1%;
+    padding: 1%;
+    padding-top: 40vh;
+    background-color: white;
+    box-shadow: 1px 1px 7px 1px #000000;
+    z-index: 1;
+}
+
+.home-modal ~ .presentation-container * {
+    filter: blur(5px);
+    pointer-events: none;
+}
+
+.home-modal-exit{
+    position:absolute;
+    bottom:0%;
+    width:100%;
+    left:0;
+    height:5%;
+    background-color: #95D1FD;
+    border: none;
+}
+
+.home-modal-exit::after{
+    content:"▲";
+    font-size: 2em;
+    text-align:center;
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    color: white;
+    cursor:pointer;
+}

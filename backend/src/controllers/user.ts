@@ -19,12 +19,16 @@ async function login(data: UserData): Promise<string>{
  * @param data User Data
  */
 async function register(data: UserData): Promise<string>{
-    await create(data);
-    const token = await login(data);
-    return token;
+    const user = await create(data);
+    return user ? "Bearer " + jwt.sign({ id: user.id }, config.secretKey) : undefined;
 }
 
-export {login, register};
+async function createGuest(): Promise<string>{
+    const user = await create({isGuest: true});
+    return user ? "Bearer " + jwt.sign({ id: user.id }, config.secretKey) : undefined;
+}
+
+export {login, register, createGuest};
 
 export default {
     login,
@@ -32,5 +36,6 @@ export default {
     update,
     del,
     read,
-    getAll
+    getAll,
+    createGuest
 }

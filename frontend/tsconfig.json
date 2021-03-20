@@ -17,7 +17,9 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "sourceMap": true,
-    "target": "esnext"
+    "target": "esnext",
+    "resolveJsonModule":true,
+    "typeRoots": ["node_modules/@types", "./@types"]
   },
   "exclude": ["node_modules"]
 }

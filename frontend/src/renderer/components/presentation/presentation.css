@@ -1,0 +1,38 @@
+.presentation-container{
+    width: 100%;
+    position: relative;
+    left: 0;
+    overflow: hidden;
+    top: 20vh;
+    height: 80vh;
+}
+
+.presentation-camera{
+    margin-top: 3%;
+    position: relative;
+    left: -12%;
+    width:60%;
+    height:100%;
+}
+
+
+.presentation-body{
+    clip-path: polygon(49% 0, 100% 0, 100% 50%, 100% 100%, 0 100%, 30% 73%);
+    width:100%;
+    height: 100%;
+    background-color: white;
+    top:0;
+    left:0;
+    position:absolute;
+}
+
+.presentation-childrens{
+    position: absolute;
+    width: 52%;
+    height: 86%;
+    left: 47%;
+    top: 12%;
+    text-align:center;
+    overflow: auto;
+    overflow-x: hidden;
+}

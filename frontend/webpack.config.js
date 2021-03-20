@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const lodash = require('lodash');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');

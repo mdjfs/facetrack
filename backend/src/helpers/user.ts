@@ -4,7 +4,12 @@ const { User } = database.models;
 
 interface UserData{
     username: string,
+    email: string,
     password: string
+}
+
+interface UserGuest{
+    isGuest: boolean
 }
 
 interface UserOptions{
@@ -14,7 +19,8 @@ interface UserOptions{
 interface UserTarget{
     id?:number,
     username?:string,
-    password?:string
+    password?:string,
+    email?:string
 }
 
 /**
@@ -22,13 +28,14 @@ interface UserTarget{
  * @param data User Data 
  * @param options User Options
  */
-async function create(data: UserData, options: UserOptions = undefined){
+async function create(data: UserData|UserGuest, options: UserOptions = undefined){
     const user = await User.create(data);
     if(options){
         await user.setRole(options.role);
     }else{
         await user.setRole("user");
     }
+    return user;
 }
 
 /**

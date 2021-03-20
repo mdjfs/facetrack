@@ -1,0 +1,57 @@
+{
+  "login":{
+    "inputs":{
+      "user":{
+        "name":"Username",
+        "placeholder":"Insert your username"
+      },
+      "password":{
+        "name":"Password",
+        "placeholder":"Insert your password"
+      }
+    },
+    "buttons":{
+      "login":"Join in your account",
+      "register":"Create new account"
+    }
+  },
+  "register":{
+    "inputs":{
+      "names":{
+        "name":"Names",
+        "placeholder":"Example: John Debian"
+      },
+      "surnames":{
+        "name":"Surnames",
+        "placeholder":"Example: Smith Williams"
+      },
+      "user":{
+        "name":"What's your username?",
+        "placeholder":"Example: Guru99",
+        "validatorMessage":"User can only contain alphanumeric characters and underscore between the name"
+      },
+      "email":{
+        "name":"Write your email",
+        "placeholder":"Example: yoda@cooldomain.com",
+        "validatorMessage":"Insert a valid email !"
+      },
+      "password":{
+        "name":"Your password",
+        "placeholder":"Make it safe!",
+        "validatorMessage":"Minimum eight characters, at least one letter and one number"
+      }
+    },
+    "buttons":{
+      "register":"Create new account"
+    }
+  },
+  "home":{
+    "buttons":{
+      "join":"Join in your account",
+      "continue":"Continue as guest"
+    },
+    "link":{
+      "new":"New here?"
+    }
+  }
+}

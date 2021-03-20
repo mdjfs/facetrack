@@ -1,6 +1,6 @@
 import hasha from "hasha";
 import Role from "./role";
-import { Table, Column, Model, ForeignKey, Unique,  BelongsTo, HasMany } from "sequelize-typescript";
+import { Table, Column, Model, ForeignKey, Unique,  BelongsTo, HasMany, Default } from "sequelize-typescript";
 import Person from "./person";
 import Camera from "./camera";
 
@@ -9,7 +9,23 @@ export default class User extends Model{
 
     @Unique
     @Column
-    username: string
+    get username(): string{
+        return this.getDataValue("username");
+    }
+
+    set username(username: string){
+        this.setDataValue("username", this.getDataValue("isGuest") ? null : username);
+    }
+
+    @Unique
+    @Column
+    get email(): string{
+        return this.getDataValue("username");
+    }
+
+    set email(email: string){
+        this.setDataValue("username", this.getDataValue("isGuest") ? null : email);
+    }
 
     @HasMany(() => Person, {onDelete: "CASCADE"})
     persons: Person[]
@@ -24,13 +40,17 @@ export default class User extends Model{
     @BelongsTo(() => Role)
     role: Role
 
+    @Default(false)
+    @Column
+    isGuest: Boolean
+
     @Column
     get password(): string{
         return this.getDataValue("password");
     }
 
     set password(password: string){
-        this.setDataValue("password", hasha(password))
+        this.setDataValue("password", this.getDataValue("isGuest") ? null : hasha(password))
     }
 
     async getRole(): Promise<string>{

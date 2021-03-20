@@ -1,0 +1,14 @@
+{
+  "inputs":{
+    "user":{
+      "name":"Cual es tu nombre de Usuario?",
+      "placeholder":"Ej. Guru99",
+      "validatorMessage":"I dont know"
+    },
+    "password":{
+      "name":"Your password",
+      "placeholder":"Make it safe!",
+      "validatorMessage":"I dont know"
+    }
+  }
+}

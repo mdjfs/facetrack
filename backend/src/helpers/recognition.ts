@@ -3,12 +3,11 @@
  * face-api.js version: 0.22.2
  *  Works on linux
  */
-
  import * as tf from "@tensorflow/tfjs-node";
 
 
  import * as faceapi from "face-api.js";
- import { FaceDetection } from "face-api.js";
+ import { FaceDetection} from "face-api.js";
  
  import sharp from "sharp";
 
