@@ -2,16 +2,15 @@
 import * as React from 'react';
 import './link.css';
 
-interface ButtonProps{
+interface LinkProps{
   content: string;
-  href?: string;
-  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
 }
 
-function Link({content, href = "#" , onClick = ()=>{} , className = ""}: ButtonProps): JSX.Element {
+function Link({content, onClick = ()=>{} , className = ""}: LinkProps): JSX.Element {
   return (
-    <a href={href} onClick={onClick} className={`app-link ${className}`}>{content}</a>
+    <button onClick={onClick} className={`app-link ${className}`}>{content}</button>
   );
 }
 

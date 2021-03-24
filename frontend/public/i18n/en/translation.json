@@ -1,57 +1,107 @@
 {
-  "login":{
-    "inputs":{
-      "user":{
-        "name":"Username",
-        "placeholder":"Insert your username"
+  "login": {
+    "inputs": {
+      "user": {
+        "name": "Identity",
+        "placeholder": "Insert your username or email"
       },
-      "password":{
-        "name":"Password",
-        "placeholder":"Insert your password"
+      "password": {
+        "name": "Password",
+        "placeholder": "Insert your password"
       }
     },
-    "buttons":{
-      "login":"Join in your account",
-      "register":"Create new account"
+    "buttons": {
+      "login": "Join in your account",
+      "register": "Create new account"
     }
   },
-  "register":{
-    "inputs":{
-      "names":{
-        "name":"Names",
-        "placeholder":"Example: John Debian"
+  "register": {
+    "inputs": {
+      "names": {
+        "name": "Names",
+        "placeholder": "Example: John Debian"
       },
-      "surnames":{
-        "name":"Surnames",
-        "placeholder":"Example: Smith Williams"
+      "surnames": {
+        "name": "Surnames",
+        "placeholder": "Example: Smith Williams"
       },
-      "user":{
-        "name":"What's your username?",
-        "placeholder":"Example: Guru99",
-        "validatorMessage":"User can only contain alphanumeric characters and underscore between the name"
+      "user": {
+        "name": "What's your username?",
+        "placeholder": "Example: Guru99",
+        "validatorMessage": "User can only contain alphanumeric characters and underscore between the name"
       },
-      "email":{
-        "name":"Write your email",
-        "placeholder":"Example: yoda@cooldomain.com",
-        "validatorMessage":"Insert a valid email !"
+      "email": {
+        "name": "Write your email",
+        "placeholder": "Example: yoda@cooldomain.com",
+        "validatorMessage": "Insert a valid email !"
       },
-      "password":{
-        "name":"Your password",
-        "placeholder":"Make it safe!",
-        "validatorMessage":"Minimum eight characters, at least one letter and one number"
+      "password": {
+        "name": "Your password",
+        "placeholder": "Make it safe!",
+        "validatorMessage": "Minimum eight characters, at least one letter and one number"
       }
     },
-    "buttons":{
-      "register":"Create new account"
+    "buttons": {
+      "register": "Create new account"
     }
   },
-  "home":{
-    "buttons":{
-      "join":"Join in your account",
-      "continue":"Continue as guest"
+  "home": {
+    "buttons": {
+      "join": "Join in your account",
+      "continue": "Continue as guest"
     },
-    "link":{
-      "new":"New here?"
+    "link": {
+      "new": "New here?"
     }
+  },
+  "routes": {
+    "dashboard": "Dashboard"
+  },
+  "error": {
+    "LOGIN_FAILED": "Authentication failed. Are you sure if the credentials are correct?",
+    "SHOW_DETAILS_MSG": "See details",
+    "NO_DEVICES": "No devices found.",
+    "NO_PROFILES": "No profiles found.",
+    "NO_DEVICE": "No device found."
+  },
+  "dashboard": {
+    "header": "Your cameras"
+  },
+  "detect": {
+    "header": "Register devices",
+    "buttons": {
+      "detect": "Detect ONVIF devices",
+      "register": "Register device",
+      "refresh": "Reload"
+    },
+    "device": {
+      "name": "Name",
+      "hardware": "Hardware",
+      "location": "Location"
+    }
+  },
+  "newDevice": {
+    "header": "Select Profile",
+    "inputs": {
+      "user": {
+        "name": "User",
+        "placeholder": "Insert device onvif username"
+      },
+      "pass": {
+        "name": "Password",
+        "placeholder": "Insert device onvif password"
+      },
+      "camera": {
+        "name": "Camera name",
+        "placeholder": "Example: Kitchen"
+      }
+    },
+    "buttons": {
+      "auth": "Connect",
+      "registerCamera": "Register Camera",
+      "camera": "Register"
+    },
+    "profilesFound": "{{number}} Profiles found",
+    "createOr": "Input to create or select camera to replace the source"
   }
 }

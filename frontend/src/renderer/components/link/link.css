@@ -1,4 +1,9 @@
-a.app-link{
-    color: #95D1FD;
-    font-size: 2em;
+button.app-link {
+  color: #95d1fd;
+  font-size: 2em;
+  border: none;
+  background: none;
+  text-decoration: underline;
+  outline: none;
+  cursor: pointer;
 }
