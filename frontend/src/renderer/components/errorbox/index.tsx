@@ -1,14 +1,14 @@
-/* eslint-disable sort-imports */
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as React from "react";
-import { useTranslation } from "react-i18next";
-import "./errorbox.css";
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import './errorbox.css';
 
 interface ErrorBoxProps {
   error: string;
   complete?: Error | null;
-  exitHandler: React.MouseEventHandler<HTMLElement>;
+  exitHandler: React.MouseEventHandler<SVGSVGElement>;
+  className?: string;
 }
 
 const { useState } = React;
@@ -17,11 +17,12 @@ function ErrorBox({
   error,
   complete = null,
   exitHandler,
+  className = '',
 }: ErrorBoxProps): JSX.Element {
   const [details, setDetails] = useState(false);
   const { t } = useTranslation();
   return (
-    <div className="error-box">
+    <div className={`error-box ${className}`}>
       <FontAwesomeIcon
         className="error-box-exit"
         icon={faTimes}
@@ -29,7 +30,7 @@ function ErrorBox({
       />
       {error}
       {complete && (
-        <React.Fragment>
+        <>
           {details && (
             <div className="error-box-details">
               <FontAwesomeIcon
@@ -43,12 +44,12 @@ function ErrorBox({
           {!details && (
             <button
               className="error-box-show-details"
-              onClick={() => setDetails(true)}
-            >
-              {t("error.SHOW_DETAILS_MSG")}
+              type="button"
+              onClick={() => setDetails(true)}>
+              {t('error.SHOW_DETAILS_MSG')}
             </button>
           )}
-        </React.Fragment>
+        </>
       )}
     </div>
   );

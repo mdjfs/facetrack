@@ -1,16 +1,21 @@
-/* eslint-disable sort-imports */
 import * as React from 'react';
 import './link.css';
 
-interface LinkProps{
+interface LinkProps {
   content: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   className?: string;
 }
 
-function Link({content, onClick = ()=>{} , className = ""}: LinkProps): JSX.Element {
+function Link({
+  content,
+  onClick = undefined,
+  className = '',
+}: LinkProps): JSX.Element {
   return (
-    <button onClick={onClick} className={`app-link ${className}`}>{content}</button>
+    <button onClick={onClick} type="button" className={`app-link ${className}`}>
+      {content}
+    </button>
   );
 }
 

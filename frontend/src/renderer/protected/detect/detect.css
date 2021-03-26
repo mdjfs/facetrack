@@ -42,3 +42,13 @@
 .device-button-right {
   text-align: right;
 }
+
+.detect-loading {
+  width: 100%;
+  top: 40%;
+  font-size: 2em;
+  text-align: center;
+  position: absolute;
+  color: #32aaf8;
+  left: 50%;
+}

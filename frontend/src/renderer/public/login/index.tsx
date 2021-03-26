@@ -1,25 +1,24 @@
-/* eslint-disable sort-imports */
-/* eslint-disable import/extensions */
+import * as React from 'react';
 
-import * as React from "react";
-import * as config from "../../config.json";
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTranslation } from 'react-i18next';
 
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useTranslation } from "react-i18next";
+import { useHistory } from 'react-router';
 import {
   LoginState,
   Auth as AuthController,
-} from "_/renderer/controllers/auth";
+} from '_/renderer/controllers/auth';
 import {
   Button,
   Header,
   Input,
   Presentation,
   ErrorBox,
-} from "../../components";
-import "./login.css";
-import { useHistory } from "react-router";
+} from '../../components';
+import './login.css';
+
+import * as config from '../../config.json';
 
 const { useState, useReducer } = React;
 
@@ -29,7 +28,7 @@ function Login(): JSX.Element {
   const defaultState: LoginState = {
     username: undefined,
     email: undefined,
-    password: "",
+    password: '',
   };
   const reducer = auth.getLoginReducer();
   const [state, dispatch] = useReducer(reducer, defaultState);
@@ -40,12 +39,12 @@ function Login(): JSX.Element {
   const [error, setError] = useState<Error | null>(null);
   const { t } = useTranslation();
 
-  async function login(state: LoginState) {
+  async function login(info: LoginState) {
     setLoading(true);
     try {
-      const [error] = await auth.login(state);
-      if (error) throw error;
-      history.push("/dashboard");
+      const [loginError] = await auth.login(info);
+      if (loginError) throw loginError;
+      else history.push('/dashboard');
     } catch (e) {
       setError(e);
     } finally {
@@ -57,49 +56,49 @@ function Login(): JSX.Element {
     <>
       <Header />
       <Presentation>
-        {isLoading && <FontAwesomeIcon icon={faSpinner} spin></FontAwesomeIcon>}
+        {isLoading && <FontAwesomeIcon icon={faSpinner} spin />}
         {!isLoading && (
           <>
             {error && (
               <ErrorBox
-                error={t("error.LOGIN_FAILED")}
+                error={t('error.LOGIN_FAILED')}
                 complete={error}
                 exitHandler={() => setError(null)}
               />
             )}
             <Input
-              placeholder={t("login.inputs.user.placeholder")}
-              name={t("login.inputs.user.name")}
+              placeholder={t('login.inputs.user.placeholder')}
+              name={t('login.inputs.user.name')}
               handler={(payload: string) => {
                 if (new RegExp(config.REG_EXPRESSIONS.email).test(payload)) {
-                  dispatch({ type: "setEmail", payload });
+                  dispatch({ type: 'setEmail', payload });
                 } else if (
                   new RegExp(config.REG_EXPRESSIONS.username).test(payload)
                 ) {
-                  dispatch({ type: "setUsername", payload });
+                  dispatch({ type: 'setUsername', payload });
                 }
               }}
               validator={null}
               validatorMessage={null}
             />
             <Input
-              placeholder={t("login.inputs.password.placeholder")}
-              name={t("login.inputs.password.name")}
+              placeholder={t('login.inputs.password.placeholder')}
+              name={t('login.inputs.password.name')}
               handler={(payload: string) => {
-                dispatch({ type: "setPassword", payload });
+                dispatch({ type: 'setPassword', payload });
               }}
               password
             />
             <Button
               theme="primary"
-              content={t("login.buttons.login")}
+              content={t('login.buttons.login')}
               onClick={() => login(state)}
             />
             <Button
               theme="secondary"
               className="left-button"
-              content={t("login.buttons.register")}
-              onClick={() => history.push("/register")}
+              content={t('login.buttons.register')}
+              onClick={() => history.push('/register')}
             />
           </>
         )}

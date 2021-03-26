@@ -53,3 +53,19 @@
 .app-card {
   text-align: center;
 }
+
+.profile-stream {
+  position: relative !important;
+  width: 80% !important;
+  text-align: center;
+}
+
+.new-device-loading {
+  width: 100%;
+  top: 40%;
+  font-size: 2em;
+  text-align: center;
+  position: absolute;
+  color: #32aaf8;
+  left: 50%;
+}

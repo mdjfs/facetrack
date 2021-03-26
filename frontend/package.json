@@ -34,6 +34,8 @@
   "author": "Marcos Fuenmayor",
   "license": "MIT",
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "@types/react-select": "^4.0.13",
     "electron-store": "^7.0.2",
     "i18next": "^19.9.2",

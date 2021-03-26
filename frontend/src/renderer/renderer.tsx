@@ -3,18 +3,26 @@
  * React renderer.
  */
 // Import the styles here to process them with webpack
-import "_public/style.css";
-import "_public/i18n/config";
+import '_public/style.css';
+import '_public/i18n/config';
 
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { Home, Login, Register } from "./public";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import {
+  HashRouter,
+  Redirect,
+  Route,
+  RouteComponentProps,
+  Switch,
+} from 'react-router-dom';
+import { Home, Login, Register } from './public';
 
-import AuthController from "./controllers/auth";
-import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
-import { Dashboard, Detect, NewDevice } from "./protected";
+import AuthController from './controllers/auth';
+import { Dashboard, Detect, NewDevice } from './protected';
 
 const auth = new AuthController();
+
+type newDeviceParams = { id: string };
 
 function Routes(): JSX.Element {
   function guard(component: JSX.Element) {
@@ -37,11 +45,14 @@ function Routes(): JSX.Element {
         <Route
           exact
           path="/new-device/:id"
-          render={({ match }) => guard(<NewDevice id={match.params.id} />)()}
+          render={({ match }: RouteComponentProps<newDeviceParams>) => {
+            const component = <NewDevice paramId={match.params.id} />;
+            return guard(component)();
+          }}
         />
       </Switch>
     </HashRouter>
   );
 }
 
-ReactDOM.render(<Routes />, document.getElementById("app"));
+ReactDOM.render(<Routes />, document.getElementById('app'));

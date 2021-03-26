@@ -1,0 +1,9 @@
+.app-tooltip-message {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background-color: white;
+  box-shadow: 1px 1px 3px 0px #000000;
+  color: black;
+  font-size: 0.8em;
+}

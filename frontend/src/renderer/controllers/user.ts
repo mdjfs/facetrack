@@ -1,8 +1,4 @@
-/* eslint-disable default-case */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable consistent-return */
-/* eslint-disable sort-imports */
-import * as config from "../config.json";
+import * as config from '../config.json';
 
 interface UserData {
   id: number;
@@ -19,11 +15,12 @@ interface UserData {
 
 class User {
   headers: Headers = new Headers();
+
   data: UserData;
 
   constructor(token: string, data: UserData | null = null) {
-    this.headers.append("Content-Type", "application/json");
-    this.headers.append("Authorization", token);
+    this.headers.append('Content-Type', 'application/json');
+    this.headers.append('Authorization', token);
     if (data) this.data = data;
   }
 
@@ -31,15 +28,15 @@ class User {
     try {
       const response = await fetch(`${config.API_URL}/user`, {
         headers: this.headers,
-        method: "GET",
+        method: 'GET',
       });
-      if (response.status == 200) {
-        const json = await response.json();
-        this.data = json;
-        return [null, this.data];
-      } else {
+      if (response.status !== 200) {
         const text = await response.text();
         throw new Error(text);
+      } else {
+        const json: UserData = (await response.json()) as UserData;
+        this.data = json;
+        return [null, this.data];
       }
     } catch (e) {
       return [e, null];

@@ -1,10 +1,6 @@
-/* eslint-disable default-case */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable consistent-return */
-/* eslint-disable sort-imports */
-import * as config from "../config.json";
-import User from "./user";
-import Store from "./store";
+import * as config from '../config.json';
+import User from './user';
+import Store from './store';
 
 interface RegisterState {
   names: string;
@@ -15,11 +11,11 @@ interface RegisterState {
 }
 
 type RegisterAction =
-  | { type: "setNames"; payload: string }
-  | { type: "setSurnames"; payload: string }
-  | { type: "setEmail"; payload: string }
-  | { type: "setPassword"; payload: string }
-  | { type: "setUsername"; payload: string };
+  | { type: 'setNames'; payload: string }
+  | { type: 'setSurnames'; payload: string }
+  | { type: 'setEmail'; payload: string }
+  | { type: 'setPassword'; payload: string }
+  | { type: 'setUsername'; payload: string };
 
 interface LoginState {
   email?: string;
@@ -28,39 +24,42 @@ interface LoginState {
 }
 
 type LoginAction =
-  | { type: "setEmail"; payload: string }
-  | { type: "setPassword"; payload: string }
-  | { type: "setUsername"; payload: string };
+  | { type: 'setEmail'; payload: string }
+  | { type: 'setPassword'; payload: string }
+  | { type: 'setUsername'; payload: string };
 
 class Auth {
   store = Store;
+
   headers: Headers;
 
   constructor() {
     this.headers = new Headers();
-    this.headers.append("Content-Type", "application/json");
+    this.headers.append('Content-Type', 'application/json');
   }
 
   getLoginReducer() {
     return (state: LoginState, { type, payload }: LoginAction): LoginState => {
       switch (type) {
-        case "setEmail":
+        case 'setEmail':
           return {
             ...state,
             email: payload,
             username: undefined,
           };
-        case "setUsername":
+        case 'setUsername':
           return {
             ...state,
             username: payload,
             email: undefined,
           };
-        case "setPassword":
+        case 'setPassword':
           return {
             ...state,
             password: payload,
           };
+        default:
+          return state;
       }
     };
   }
@@ -68,34 +67,36 @@ class Auth {
   getRegisterReducer() {
     return (
       state: RegisterState,
-      { type, payload }: RegisterAction
+      { type, payload }: RegisterAction,
     ): RegisterState => {
       switch (type) {
-        case "setEmail":
+        case 'setEmail':
           return {
             ...state,
             email: payload,
           };
-        case "setNames":
+        case 'setNames':
           return {
             ...state,
             names: payload,
           };
-        case "setSurnames":
+        case 'setSurnames':
           return {
             ...state,
             surnames: payload,
           };
-        case "setUsername":
+        case 'setUsername':
           return {
             ...state,
             username: payload,
           };
-        case "setPassword":
+        case 'setPassword':
           return {
             ...state,
             password: payload,
           };
+        default:
+          return state;
       }
     };
   }
@@ -104,20 +105,21 @@ class Auth {
     try {
       const response = await fetch(`${config.API_URL}/login`, {
         headers: this.headers,
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(state),
       });
       const text = await response.text();
-      if (response.status == 200) {
+      if (response.status !== 200) throw new Error(text);
+      else {
         const token = text;
-        this.store.set("user-token", token);
+        this.store.set('user-token', token);
         const user = new User(token);
         await user.getData();
-        this.store.set("user", user);
+        this.store.set('user', user);
         return [null, token];
-      } else throw new Error(text);
+      }
     } catch (e) {
-      return [e, ""];
+      return [e, ''];
     }
   }
 
@@ -125,20 +127,21 @@ class Auth {
     try {
       const response = await fetch(`${config.API_URL}/user`, {
         headers: this.headers,
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(state),
       });
       const text = await response.text();
-      if (response.status == 200) {
+      if (response.status !== 200) throw new Error(text);
+      else {
         const token = text;
-        this.store.set("user-token", token);
+        this.store.set('user-token', token);
         const user = new User(token);
         await user.getData();
-        this.store.set("user", user);
+        this.store.set('user', user);
         return [null, token];
-      } else throw new Error(text);
+      }
     } catch (e) {
-      return [e, ""];
+      return [e, ''];
     }
   }
 
@@ -146,38 +149,39 @@ class Auth {
     try {
       const response = await fetch(`${config.API_URL}/user`, {
         headers: this.headers,
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ isGuest: true }),
       });
       const text = await response.text();
-      if (response.status == 200) {
+      if (response.status !== 200) throw new Error(text);
+      else {
         const token = text;
-        this.store.set("user-token", token);
+        this.store.set('user-token', token);
         const user = new User(token);
         await user.getData();
-        this.store.set("user", user);
+        this.store.set('user', user);
         return [null, token];
-      } else throw new Error(text);
+      }
     } catch (e) {
-      return [e, ""];
+      return [e, ''];
     }
   }
 
   isLogged(): boolean {
-    return !!this.store.get("user-token") && !!this.store.get("user");
+    return !!this.store.get('user-token') && !!this.store.get('user');
   }
 
   getUser(): User {
-    const user = this.store.get("user") as User;
+    const user = this.store.get('user') as User;
     return new User(this.getToken(), user.data);
   }
 
   getToken(): string {
-    return this.store.get("user-token") as string;
+    return this.store.get('user-token') as string;
   }
 
   logout(): void {
-    this.store.delete("user-token");
+    this.store.delete('user-token');
   }
 }
 

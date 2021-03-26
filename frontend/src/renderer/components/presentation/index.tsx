@@ -1,11 +1,10 @@
-/* eslint-disable sort-imports */
 import * as React from 'react';
 import './presentation.css';
 
 const camera = require.resolve('_public/images/camera.jpg');
 
-interface PresentationProps{
-    children: React.ReactNode
+interface PresentationProps {
+  children: React.ReactNode;
 }
 
 function Presentation(props: PresentationProps): JSX.Element {
@@ -14,9 +13,7 @@ function Presentation(props: PresentationProps): JSX.Element {
     <div className="presentation-container">
       <img alt="Camera" src={camera} className="presentation-camera" />
       <div className="presentation-body">
-        <div className="presentation-childrens">
-          {children}
-        </div>
+        <div className="presentation-childrens">{children}</div>
       </div>
     </div>
   );

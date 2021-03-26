@@ -1,32 +1,36 @@
-/* eslint-disable sort-imports */
-
-import * as React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./new.css";
-import { Button, Card, ErrorBox, Input, Modal } from "_/renderer/components";
+import * as React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './new.css';
+import {
+  Button,
+  Card,
+  ErrorBox,
+  Input,
+  Modal,
+  Stream,
+} from '_/renderer/components';
 import {
   faChevronLeft,
-  faPlusSquare,
-  faSpinner,
-} from "@fortawesome/free-solid-svg-icons";
-import { useTranslation } from "react-i18next";
-import { startProbe, OnvifDevice, Probe, Profile } from "node-onvif-ts";
-import { useHistory, useParams } from "react-router";
-import { DeviceT, Device } from "_/renderer/controllers/device";
-import Camera from "_/renderer/controllers/camera";
-import Select, { ValueType } from "react-select";
+  faCircleNotch,
+} from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
+import { OnvifDevice, Profile } from 'node-onvif-ts';
+import { useHistory } from 'react-router';
+import { DeviceT, Device } from '_/renderer/controllers/device';
+import { Camera, DemoCamera } from '_/renderer/controllers/camera';
+import Select from 'react-select';
 
 const { useState, useEffect } = React;
 const deviceController = new Device();
 const cameraController = new Camera();
 
 interface NewDeviceProps {
-  id: string;
+  paramId: string;
 }
 
 interface ProfileT {
   profile: Profile;
-  snapshot: Buffer;
+  demoCamera: Camera;
 }
 
 interface CameraInfo {
@@ -41,40 +45,42 @@ type CameraOptions = {
   value: number;
 };
 
-function NewDevice({ id }: NewDeviceProps): JSX.Element {
+function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
   const { t } = useTranslation();
 
   const [profiles, setProfiles] = useState<ProfileT[]>([]);
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [device, setDevice] = useState<DeviceT>();
-  const [user, setUser] = useState("");
-  const [pass, setPass] = useState("");
+  const [user, setUser] = useState('');
+  const [pass, setPass] = useState('');
   const [camera, setCamera] = useState<CameraInfo | null>(null);
-  const [newCamera, setNewCamera] = useState("");
+  const [newCamera, setNewCamera] = useState('');
   const [oldCamera, setOldCamera] = useState(0);
 
   const history = useHistory();
 
-  if (!id) history.push("/detect");
-  else id = unescape(id);
+  let id: string;
+
+  if (!paramId) history.push('/detect');
+  else id = unescape(paramId);
 
   async function linkDevice() {
     try {
-      console.log(camera, newCamera, oldCamera);
-
       setLoading(true);
       if (camera) {
-        let target: Camera | undefined = undefined;
+        let target: Camera | undefined;
         let replace = false;
-        if (newCamera !== "") {
-          const [error, camera] = await cameraController.create(newCamera);
-          if (error) setError(error);
-          else if (camera) {
-            target = camera;
+        if (newCamera !== '') {
+          const [linkError, linkCamera] = await cameraController.create(
+            newCamera,
+          );
+          if (linkError) setError(linkError);
+          else if (linkCamera) {
+            target = linkCamera;
           }
         } else {
-          target = camera.cameras.filter((value) => value.id == oldCamera)[0];
+          [target] = camera.cameras.filter((value) => value.id === oldCamera);
           replace = true;
         }
         if (target) {
@@ -84,7 +90,7 @@ function NewDevice({ id }: NewDeviceProps): JSX.Element {
             target,
             user,
             pass,
-            replace
+            replace,
           );
           setCamera(null);
         }
@@ -99,169 +105,183 @@ function NewDevice({ id }: NewDeviceProps): JSX.Element {
   async function loadCamera(profile: Profile) {
     setLoading(true);
     if (device) {
-      const [error, cameras] = await cameraController.getAll();
-      if (error) setError(error);
-      else if (cameras) {
+      const [loadError, loadCameras] = await cameraController.getAll();
+      if (error) setError(loadError);
+      else if (loadCameras) {
         setCamera({
-          profile: profile,
-          device: device,
-          cameras: cameras,
+          profile,
+          device,
+          cameras: loadCameras,
         });
       }
     }
     setLoading(false);
   }
 
-  async function loadDevice(user: string, pass: string) {
+  async function getDevice(index: string | number): Promise<DeviceT | null> {
+    if (device) {
+      const onvif = new OnvifDevice({
+        xaddr: device?.probe.xaddrs[0],
+        user,
+        pass,
+      });
+      await onvif.init();
+      onvif.changeProfile(index);
+      return {
+        ...device,
+        device: onvif,
+      };
+    }
+    return null;
+  }
+
+  async function loadDevice() {
     setLoading(true);
     if (device) {
       const receiver = device.device;
       receiver.setAuth(user, pass);
-      let error = null;
       try {
         await receiver.init();
-      } catch (e) {
-        error = e;
-      }
-      if (error) setError(error);
-      else {
-        const profiles: ProfileT[] = [];
-        for (const profile of receiver.getProfileList()) {
-          receiver.changeProfile(profile.token);
-          const snap = await receiver.fetchSnapshot();
-          profiles.push({
-            profile: profile,
-            snapshot: snap.body,
-          });
+        const loadProfiles: ProfileT[] = [];
+        const loadProfileList = receiver.getProfileList();
+        for (const profile of loadProfileList) {
+          const demoDevice = await getDevice(profile.token);
+          if (demoDevice) {
+            loadProfiles.push({
+              profile,
+              demoCamera: new DemoCamera(demoDevice, user, pass),
+            });
+          }
         }
-        setProfiles(profiles);
+        setProfiles(loadProfiles);
+      } catch (e) {
+        setError(e);
       }
+    } else {
+      setError(new Error(t('error.NO_DEVICE')));
     }
     setLoading(false);
   }
 
   useEffect(() => {
     setLoading(true);
-    const device = deviceController.getDeviceById(id);
-    if (!device) setError(new Error(t("error.NO_DEVICE")));
-    else {
-      setDevice(device);
-    }
+    const foundDevice = deviceController.getDeviceById(id);
+    if (!foundDevice) history.push('/detect');
+    else setDevice(foundDevice);
     setLoading(false);
   }, []);
 
   return (
-    <React.Fragment>
+    <>
       <FontAwesomeIcon
         icon={faChevronLeft}
         className="go-back"
-        onClick={() => history.push("/detect")}
-      ></FontAwesomeIcon>
+        onClick={() => history.push('/detect')}
+      />
       <div className="new-device-header">
-        <h1>{t("newDevice.header")}</h1>
+        <h1>{t('newDevice.header')}</h1>
       </div>
       <div className="new-device-body">
-        {isLoading && <FontAwesomeIcon icon={faSpinner} spin></FontAwesomeIcon>}
+        {isLoading && (
+          <FontAwesomeIcon
+            className="new-device-loading"
+            icon={faCircleNotch}
+            spin
+          />
+        )}
         {!isLoading && (
-          <React.Fragment>
+          <>
             {error && (
               <ErrorBox
-                error={t("error.NO_PROFILES")}
+                error={t('error.NO_PROFILES')}
                 complete={error}
                 exitHandler={() => setError(null)}
               />
             )}
             {profiles.length > 0 && (
-              <React.Fragment>
+              <>
                 <h3>
-                  {t("newDevice.profilesFound", { number: profiles.length })}
-                  {profiles.map((profile, index) => {
-                    const base64String = btoa(
-                      String.fromCharCode(...new Uint8Array(profile.snapshot))
-                    );
-                    return (
-                      <Card size="large" key={`profile-${index}`}>
-                        <img
-                          src={`data:image/png;base64,${base64String}`}
-                          alt="Profile"
-                          className="profile-image"
-                        ></img>
-                        <h3>{profile.profile.name}</h3>
-                        <Button
-                          content={t("newDevice.buttons.registerCamera")}
-                          theme="primary"
-                          onClick={() => loadCamera(profile.profile)}
-                        ></Button>
-                      </Card>
-                    );
-                  })}
+                  {t('newDevice.profilesFound', { number: profiles.length })}
                 </h3>
-              </React.Fragment>
+                {profiles.map((profile) => (
+                  <Card size="large" key={`profile-${profile.profile.token}`}>
+                    <Stream
+                      className="profile-stream"
+                      camera={profile.demoCamera}
+                    />
+                    <h3>{profile.profile.name}</h3>
+                    <Button
+                      content={t('newDevice.buttons.registerCamera')}
+                      theme="primary"
+                      onClick={() => loadCamera(profile.profile)}
+                    />
+                  </Card>
+                ))}
+              </>
             )}
 
             {camera && !camera.camera && !error && (
               <Modal exitHandler={() => setCamera(null)}>
                 <div className="new-device-camera">
                   <Input
-                    name={t("newDevice.inputs.camera.name")}
-                    placeholder={t("newDevice.inputs.camera.placeholder")}
+                    name={t('newDevice.inputs.camera.name')}
+                    placeholder={t('newDevice.inputs.camera.placeholder')}
                     handler={(value: string) => setNewCamera(value)}
                   />
                   {camera.cameras.length > 0 && (
-                    <React.Fragment>
-                      <strong>{t("newDevice.createOr")}:</strong>
+                    <>
                       <Select
-                        name={t("newDevice.createOr")}
+                        name={t('newDevice.createOr')}
                         options={(() => {
                           const options: CameraOptions[] = camera.cameras.map(
                             (value) => ({
                               value: value.id,
                               label: `${value.name} (id: ${value.id})`,
-                            })
+                            }),
                           );
                           return options;
                         })()}
-                        onChange={(camera) =>
-                          setOldCamera((camera as CameraOptions).value)
-                        }
+                        onChange={(selectCamera) => {
+                          setOldCamera((selectCamera as CameraOptions).value);
+                        }}
                       />
-                    </React.Fragment>
+                    </>
                   )}
                   <Button
                     theme="secondary"
-                    content={t("newDevice.buttons.camera")}
+                    content={t('newDevice.buttons.camera')}
                     onClick={() => linkDevice()}
                   />
                 </div>
               </Modal>
             )}
 
-            {profiles.length == 0 && !error && (
-              <Modal exitHandler={() => history.push("/detect")}>
+            {profiles.length === 0 && !error && (
+              <Modal exitHandler={() => history.push('/detect')}>
                 <div className="new-device-auth">
                   <Input
-                    name={t("newDevice.inputs.user.name")}
-                    placeholder={t("newDevice.inputs.user.placeholder")}
+                    name={t('newDevice.inputs.user.name')}
+                    placeholder={t('newDevice.inputs.user.placeholder')}
                     handler={(value: string) => setUser(value)}
                   />
                   <Input
-                    name={t("newDevice.inputs.pass.name")}
-                    placeholder={t("newDevice.inputs.pass.placeholder")}
+                    name={t('newDevice.inputs.pass.name')}
+                    placeholder={t('newDevice.inputs.pass.placeholder')}
                     handler={(value: string) => setPass(value)}
                     password
                   />
                   <Button
                     theme="secondary"
-                    content={t("newDevice.buttons.auth")}
-                    onClick={() => loadDevice(user, pass)}
+                    content={t('newDevice.buttons.auth')}
+                    onClick={() => loadDevice()}
                   />
                 </div>
               </Modal>
             )}
-          </React.Fragment>
+          </>
         )}
       </div>
-    </React.Fragment>
+    </>
   );
 }
 
