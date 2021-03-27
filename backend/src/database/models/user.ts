@@ -7,6 +7,24 @@ import Camera from "./camera";
 @Table({timestamps: true, tableName: "user", freezeTableName: true})
 export default class User extends Model{
 
+    @Column
+    get names(): string{
+        return this.getDataValue("names");
+    }
+
+    set names(names: string){
+        this.setDataValue("names", this.getDataValue("isGuest") ? null : names);
+    }
+
+    @Column
+    get surnames(): string{
+        return this.getDataValue("surnames");
+    }
+
+    set surnames(surnames: string){
+        this.setDataValue("surnames", this.getDataValue("isGuest") ? null : surnames);
+    }
+
     @Unique
     @Column
     get username(): string{
@@ -20,11 +38,11 @@ export default class User extends Model{
     @Unique
     @Column
     get email(): string{
-        return this.getDataValue("username");
+        return this.getDataValue("email");
     }
 
     set email(email: string){
-        this.setDataValue("username", this.getDataValue("isGuest") ? null : email);
+        this.setDataValue("email", this.getDataValue("isGuest") ? null : email);
     }
 
     @HasMany(() => Person, {onDelete: "CASCADE"})
@@ -43,6 +61,10 @@ export default class User extends Model{
     @Default(false)
     @Column
     isGuest: Boolean
+
+    @Default(false)
+    @Column
+    isValidated: Boolean
 
     @Column
     get password(): string{

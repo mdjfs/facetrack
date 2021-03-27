@@ -3,6 +3,8 @@ import database from "../database";
 const { User } = database.models;
 
 interface UserData{
+    names: string,
+    surnames: string,
     username: string,
     email: string,
     password: string
@@ -48,6 +50,7 @@ async function read(target: UserTarget){
     return {
         id: user.id,
         username: user.username,
+        email: user.email,
         role: role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
