@@ -1,4 +1,9 @@
 {
+
+  "confirm": {
+    "cancel": "Cancel",
+    "ok": "Ok"
+  },
   "login": {
     "inputs": {
       "user": {
@@ -65,7 +70,8 @@
     "NO_DEVICE": "No device found."
   },
   "dashboard": {
-    "header": "Your cameras"
+    "header": "Your cameras",
+    "deleteConfirm": "Are you sure to delete this camera? WARNING: Your detections will be removed"
   },
   "detect": {
     "header": "Register devices",
@@ -77,7 +83,8 @@
     "device": {
       "name": "Name",
       "hardware": "Hardware",
-      "location": "Location"
+      "location": "Location",
+      "address": "IP Address"
     }
   },
   "newDevice": {
@@ -102,6 +109,13 @@
       "camera": "Register"
     },
     "profilesFound": "{{number}} Profiles found",
-    "createOr": "Input to create or select camera to replace the source"
+    "createOr": "Or select a camera to replace the source"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "persons": "My Persons"
+  },
+  "persons": {
+    "header": "Your Persons"
   }
 }

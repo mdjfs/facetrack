@@ -1,0 +1,49 @@
+.confirm-modal {
+  left: 25% !important;
+  top: 30% !important;
+  width: calc(50% - 10em) !important;
+  height: auto !important;
+  text-align: center;
+}
+
+.cancel-button button {
+  padding: 10% !important;
+}
+
+.success-button button {
+  padding: 20% !important;
+}
+
+@media (orientation: landscape) {
+  .cancel-button,
+  .success-button {
+    margin-top: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+
+  .confirm-modal {
+    padding-bottom: 7em !important;
+  }
+
+  .confirm-actions {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    left: 0;
+    text-align: center;
+  }
+}
+
+@media (orientation: portrait) {
+  .confirm-modal {
+    left: 10% !important;
+    width: calc(80% - 10em) !important;
+  }
+  .confirm-modal .button-wrapper {
+    margin: 5%;
+  }
+}

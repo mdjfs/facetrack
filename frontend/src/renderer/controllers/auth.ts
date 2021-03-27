@@ -101,69 +101,57 @@ class Auth {
     };
   }
 
-  async login(state: LoginState): Promise<[Error | null, string]> {
-    try {
-      const response = await fetch(`${config.API_URL}/login`, {
-        headers: this.headers,
-        method: 'POST',
-        body: JSON.stringify(state),
-      });
-      const text = await response.text();
-      if (response.status !== 200) throw new Error(text);
-      else {
-        const token = text;
-        this.store.set('user-token', token);
-        const user = new User(token);
-        await user.getData();
-        this.store.set('user', user);
-        return [null, token];
-      }
-    } catch (e) {
-      return [e, ''];
+  async login(state: LoginState): Promise<string> {
+    const response = await fetch(`${config.API_URL}/login`, {
+      headers: this.headers,
+      method: 'POST',
+      body: JSON.stringify(state),
+    });
+    const text = await response.text();
+    if (response.status !== 200) throw new Error(text);
+    else {
+      const token = text;
+      this.store.set('user-token', token);
+      const user = new User(token);
+      await user.getData();
+      this.store.set('user', user);
+      return token;
     }
   }
 
-  async register(state: RegisterState): Promise<[Error | null, string]> {
-    try {
-      const response = await fetch(`${config.API_URL}/user`, {
-        headers: this.headers,
-        method: 'POST',
-        body: JSON.stringify(state),
-      });
-      const text = await response.text();
-      if (response.status !== 200) throw new Error(text);
-      else {
-        const token = text;
-        this.store.set('user-token', token);
-        const user = new User(token);
-        await user.getData();
-        this.store.set('user', user);
-        return [null, token];
-      }
-    } catch (e) {
-      return [e, ''];
+  async register(state: RegisterState): Promise<string> {
+    const response = await fetch(`${config.API_URL}/user`, {
+      headers: this.headers,
+      method: 'POST',
+      body: JSON.stringify(state),
+    });
+    const text = await response.text();
+    if (response.status !== 200) throw new Error(text);
+    else {
+      const token = text;
+      this.store.set('user-token', token);
+      const user = new User(token);
+      await user.getData();
+      this.store.set('user', user);
+      return token;
     }
   }
 
-  async guest(): Promise<[Error | null, string]> {
-    try {
-      const response = await fetch(`${config.API_URL}/user`, {
-        headers: this.headers,
-        method: 'POST',
-        body: JSON.stringify({ isGuest: true }),
-      });
-      const text = await response.text();
-      if (response.status !== 200) throw new Error(text);
-      else {
-        const token = text;
-        this.store.set('user-token', token);
-        const user = new User(token);
-        await user.getData();
-        this.store.set('user', user);
-        return [null, token];
-      }
-    } catch (e) {
-      return [e, ''];
+  async guest(): Promise<string> {
+    const response = await fetch(`${config.API_URL}/user`, {
+      headers: this.headers,
+      method: 'POST',
+      body: JSON.stringify({ isGuest: true }),
+    });
+    const text = await response.text();
+    if (response.status !== 200) throw new Error(text);
+    else {
+      const token = text;
+      this.store.set('user-token', token);
+      const user = new User(token);
+      await user.getData();
+      this.store.set('user', user);
+      return token;
     }
   }
 

@@ -17,7 +17,7 @@ function Detect(): JSX.Element {
   const { t } = useTranslation();
 
   const [devices, setDevices] = useState<DeviceT[]>([]);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error>();
   const [isLoading, setLoading] = useState(false);
 
   const history = useHistory();
@@ -31,9 +31,16 @@ function Detect(): JSX.Element {
     setLoading(false);
   }
 
-  useEffect(() => {
+  async function loadDevices() {
+    setLoading(true);
+    await deviceController.refresh();
     const devicesFound = deviceController.getDevices();
     setDevices(devicesFound);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    void loadDevices();
   }, []);
 
   return (
@@ -60,7 +67,7 @@ function Detect(): JSX.Element {
               <ErrorBox
                 error={t('error.NO_DEVICES')}
                 complete={error}
-                exitHandler={() => setError(null)}
+                exitHandler={() => setError(undefined)}
               />
             )}
             {devices.length > 0 && (

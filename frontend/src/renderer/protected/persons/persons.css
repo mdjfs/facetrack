@@ -1,0 +1,24 @@
+.persons-header {
+  width: 80%;
+  left: 10%;
+  border-bottom: solid 2px rgba(128, 128, 128, 0.151);
+  position: relative;
+  text-align: center;
+  font-size: 0.8em;
+  color: black;
+}
+
+.persons-header h1 {
+  margin-bottom: 0px;
+  font-weight: lighter;
+}
+
+.persons-cards {
+  position: relative;
+  left: 10%;
+  width: 60%;
+  text-align: center;
+  padding: 10%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import {
   faCircleNotch,
   faExclamationTriangle,
@@ -16,6 +17,7 @@ interface StreamProps {
   camera: Camera;
   latency?: number;
   className?: string;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
 const noVideo = require.resolve('_public/images/no_video.png');
@@ -24,6 +26,7 @@ function Stream({
   camera,
   latency = 500,
   className = '',
+  onClick = undefined,
 }: StreamProps): JSX.Element {
   const [imageUri, setImageUri] = useState('');
   const [error, setError] = useState<Error | null>(null);
@@ -104,6 +107,7 @@ function Stream({
   return (
     <img
       className={`image-loaded app-stream ${className}`}
+      onClick={onClick}
       src={imageUri}
       alt="Stream"
     />

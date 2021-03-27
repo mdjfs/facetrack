@@ -36,15 +36,14 @@ function Login(): JSX.Element {
   const history = useHistory();
 
   const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error>();
   const { t } = useTranslation();
 
   async function login(info: LoginState) {
     setLoading(true);
     try {
-      const [loginError] = await auth.login(info);
-      if (loginError) throw loginError;
-      else history.push('/dashboard');
+      await auth.login(info);
+      history.push('/dashboard');
     } catch (e) {
       setError(e);
     } finally {
@@ -63,7 +62,7 @@ function Login(): JSX.Element {
               <ErrorBox
                 error={t('error.LOGIN_FAILED')}
                 complete={error}
-                exitHandler={() => setError(null)}
+                exitHandler={() => setError(undefined)}
               />
             )}
             <Input

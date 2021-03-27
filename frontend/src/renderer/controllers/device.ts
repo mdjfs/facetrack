@@ -11,6 +11,7 @@ interface RegisteredT extends DeviceT {
   camera: Camera;
   user: string;
   pass: string;
+  profile: string | number;
 }
 
 class Device {
@@ -93,7 +94,7 @@ class Device {
     this.updateDevices();
   }
 
-  getByCamera(camera: Camera): RegisteredT | null {
+  getByCamera(camera: Camera): RegisteredT | undefined {
     const device = this.devicesRegistered.filter(
       (item) => item.camera.id === camera.id,
     );
@@ -101,7 +102,7 @@ class Device {
       const [charged] = this.chargeRegistered(device);
       return charged;
     }
-    return null;
+    return undefined;
   }
 
   register(
@@ -132,6 +133,7 @@ class Device {
         camera,
         user,
         pass,
+        profile,
       });
       this.updateDevices();
     } else throw new Error('Camera already occuped.');
@@ -142,9 +144,11 @@ class Device {
     this.store.set('devices-registered', this.devicesRegistered);
   }
 
-  getDeviceById(id: string): DeviceT | null {
-    const device = this.devices.filter((value) => value.probe.urn === id);
-    return device.length > 0 ? device[0] : null;
+  getDeviceById(id: string): DeviceT | undefined {
+    const [device] = this.devices
+      .filter((value) => value.probe.urn === id)
+      .slice();
+    return device;
   }
 
   getDevices(): DeviceT[] {

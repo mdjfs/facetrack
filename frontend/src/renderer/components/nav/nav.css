@@ -1,0 +1,140 @@
+.nav-closed {
+  background-color: var(--color-secondary);
+  position: fixed;
+  top: -6em;
+  left: -3em;
+  width: 2em;
+  height: 2em;
+  transform: rotate(45deg);
+  padding-left: 5em;
+  padding-top: 5em;
+  padding-bottom: 5em;
+  z-index: 99;
+}
+
+.nav-closed * {
+  transform: rotate(-45deg);
+}
+
+.nav-closed .hamburger {
+  color: white;
+  transform: rotate(0deg);
+  font-size: 2em;
+  position: relative;
+  left: -0.5em;
+  top: 0.5em;
+  cursor: pointer;
+}
+
+.nav-closed .hamburger:hover {
+  transition: color 1s;
+  color: rgba(255, 255, 255, 0.658);
+}
+
+.nav-open {
+  background-color: var(--color-secondary);
+  position: fixed;
+  top: -30em;
+  left: -15em;
+  width: 40em;
+  height: 60em;
+  transform: rotate(45deg);
+  padding-left: 5em;
+  padding-top: 5em;
+  padding-bottom: 5em;
+  z-index: 99;
+  box-shadow: -2px 5px 5px 2px #000000;
+  overflow: hidden;
+}
+
+.nav-open * {
+  transform: rotate(-45deg);
+}
+
+.nav-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 98;
+}
+
+.nav-exit {
+  position: absolute;
+  color: white;
+  top: 18.3em;
+  left: 7.5em;
+  font-size: 2em;
+  transform: rotate(0deg);
+  cursor: pointer;
+}
+
+.nav-exit:hover {
+  transition: all 1s;
+  color: rgba(255, 255, 255, 0.658);
+  transform: scale(1.1);
+}
+
+.nav-link-container {
+  position: absolute;
+  width: 40em;
+  height: 40em;
+  top: 17em;
+  left: 26em;
+}
+
+.nav-link {
+  background-color: rgba(255, 255, 255, 0.596);
+  position: relative;
+  display: block;
+  transform: rotate(0deg);
+  padding: 3%;
+  padding-left: 10%;
+  cursor: pointer;
+  text-transform: capitalize;
+  text-decoration: none;
+  color: black;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.nav-link:hover {
+  border: rgb(255, 255, 255) solid 1px;
+}
+
+.nav-link.nav-index-0 {
+  left: 50%;
+}
+
+.nav-link.nav-index-1 {
+  left: 40%;
+}
+
+.nav-link.nav-index-2 {
+  left: 30%;
+}
+
+.nav-link.nav-index-3 {
+  left: 20%;
+}
+
+.nav-link.nav-index-4 {
+  left: 10%;
+}
+
+.nav-link.nav-index-5 {
+  left: 0%;
+}
+
+.nav-link.focused {
+  border: rgba(0, 0, 0, 0.349) solid 1px;
+  pointer-events: none;
+}
+
+.nav-link.nav-hidden {
+  display: none;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}

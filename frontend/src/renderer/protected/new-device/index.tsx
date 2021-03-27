@@ -7,6 +7,7 @@ import {
   ErrorBox,
   Input,
   Modal,
+  NoticeBox,
   Stream,
 } from '_/renderer/components';
 import {
@@ -49,14 +50,16 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
   const { t } = useTranslation();
 
   const [profiles, setProfiles] = useState<ProfileT[]>([]);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error>();
+  const [authError, setAuthError] = useState<Error>();
   const [isLoading, setLoading] = useState(false);
   const [device, setDevice] = useState<DeviceT>();
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
-  const [camera, setCamera] = useState<CameraInfo | null>(null);
+  const [camera, setCamera] = useState<CameraInfo>();
   const [newCamera, setNewCamera] = useState('');
   const [oldCamera, setOldCamera] = useState(0);
+  const [notice, setNotice] = useState<string>();
 
   const history = useHistory();
 
@@ -65,36 +68,37 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
   if (!paramId) history.push('/detect');
   else id = unescape(paramId);
 
-  async function linkDevice() {
+  async function addCamera() {
     try {
       setLoading(true);
-      if (camera) {
-        let target: Camera | undefined;
-        let replace = false;
+      if (camera && device) {
         if (newCamera !== '') {
-          const [linkError, linkCamera] = await cameraController.create(
-            newCamera,
-          );
-          if (linkError) setError(linkError);
-          else if (linkCamera) {
-            target = linkCamera;
-          }
-        } else {
-          [target] = camera.cameras.filter((value) => value.id === oldCamera);
-          replace = true;
-        }
-        if (target) {
+          const addedCamera = await cameraController.create(newCamera);
           deviceController.register(
-            device as DeviceT,
+            device,
             camera.profile.token,
-            target,
+            addedCamera,
             user,
             pass,
-            replace,
           );
-          setCamera(null);
+          setCamera(undefined);
+          setNotice(t('newDevice.success.added'));
+        } else if (oldCamera !== 0) {
+          const [prevCamera] = camera.cameras.filter(
+            (value) => value.id === oldCamera,
+          );
+          deviceController.register(
+            device,
+            camera.profile.token,
+            prevCamera,
+            user,
+            pass,
+            true,
+          );
+          setCamera(undefined);
+          setNotice(t('newDevice.success.replaced'));
         }
-      }
+      } else throw new Error('No camera or device.');
     } catch (e) {
       setError(e);
     } finally {
@@ -105,23 +109,26 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
   async function loadCamera(profile: Profile) {
     setLoading(true);
     if (device) {
-      const [loadError, loadCameras] = await cameraController.getAll();
-      if (error) setError(loadError);
-      else if (loadCameras) {
+      try {
+        const cameras = await cameraController.getAll();
         setCamera({
           profile,
           device,
-          cameras: loadCameras,
+          cameras,
         });
+      } catch (e) {
+        setError(e);
       }
-    }
+    } else setError(new Error(t('error.NO_DEVICE')));
     setLoading(false);
   }
 
-  async function getDevice(index: string | number): Promise<DeviceT | null> {
+  async function getDevice(
+    index: string | number,
+  ): Promise<DeviceT | undefined> {
     if (device) {
       const onvif = new OnvifDevice({
-        xaddr: device?.probe.xaddrs[0],
+        xaddr: device.probe.xaddrs[0],
         user,
         pass,
       });
@@ -132,18 +139,30 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
         device: onvif,
       };
     }
-    return null;
+    return undefined;
+  }
+
+  async function auth() {
+    if (device) {
+      try {
+        const receiver = device.device;
+        receiver.setAuth(user, pass);
+        await receiver.init();
+        setAuthError(undefined);
+      } catch (e) {
+        setAuthError(e);
+      }
+    } else setError(new Error(t('error.NO_DEVICE')));
   }
 
   async function loadDevice() {
     setLoading(true);
     if (device) {
-      const receiver = device.device;
-      receiver.setAuth(user, pass);
+      await auth();
       try {
-        await receiver.init();
+        setProfiles([]);
         const loadProfiles: ProfileT[] = [];
-        const loadProfileList = receiver.getProfileList();
+        const loadProfileList = device.device.getProfileList();
         for (const profile of loadProfileList) {
           const demoDevice = await getDevice(profile.token);
           if (demoDevice) {
@@ -195,7 +214,13 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
               <ErrorBox
                 error={t('error.NO_PROFILES')}
                 complete={error}
-                exitHandler={() => setError(null)}
+                exitHandler={() => setError(undefined)}
+              />
+            )}
+            {notice && (
+              <NoticeBox
+                message={notice}
+                exitHandler={() => setNotice(undefined)}
               />
             )}
             {profiles.length > 0 && (
@@ -221,7 +246,7 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
             )}
 
             {camera && !camera.camera && !error && (
-              <Modal exitHandler={() => setCamera(null)}>
+              <Modal exitHandler={() => setCamera(undefined)}>
                 <div className="new-device-camera">
                   <Input
                     name={t('newDevice.inputs.camera.name')}
@@ -230,8 +255,8 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
                   />
                   {camera.cameras.length > 0 && (
                     <>
+                      <h3>{t('newDevice.createOr')}:</h3>
                       <Select
-                        name={t('newDevice.createOr')}
                         options={(() => {
                           const options: CameraOptions[] = camera.cameras.map(
                             (value) => ({
@@ -250,7 +275,7 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
                   <Button
                     theme="secondary"
                     content={t('newDevice.buttons.camera')}
-                    onClick={() => linkDevice()}
+                    onClick={() => addCamera()}
                   />
                 </div>
               </Modal>
@@ -259,6 +284,13 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
             {profiles.length === 0 && !error && (
               <Modal exitHandler={() => history.push('/detect')}>
                 <div className="new-device-auth">
+                  {authError && (
+                    <ErrorBox
+                      error={t('error.DEVICE_AUTH_ERROR')}
+                      complete={authError}
+                      exitHandler={() => setAuthError(undefined)}
+                    />
+                  )}
                   <Input
                     name={t('newDevice.inputs.user.name')}
                     placeholder={t('newDevice.inputs.user.placeholder')}

@@ -9,6 +9,8 @@ import Card from './card';
 import Modal from './modal';
 import Stream from './stream';
 import Tooltip from './tooltip';
+import NoticeBox from './noticebox';
+import Confirm, { ConfirmProps } from './confirm';
 
 export {
   Button,
@@ -22,6 +24,9 @@ export {
   Modal,
   Stream,
   Tooltip,
+  NoticeBox,
+  Confirm,
+  ConfirmProps,
 };
 export default {
   Button,
@@ -35,4 +40,6 @@ export default {
   Modal,
   Stream,
   Tooltip,
+  NoticeBox,
+  Confirm,
 };

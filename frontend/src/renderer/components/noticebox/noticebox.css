@@ -1,0 +1,20 @@
+div.notice-box {
+  width: 96%;
+  background-color: #35dc9399;
+  border-radius: 5px;
+  color: white;
+  padding: 2%;
+  position: relative;
+}
+
+.notice-box-exit {
+  position: absolute;
+  left: 1%;
+  top: 0.5em;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.notice-box-exit:hover {
+  opacity: 0.7;
+}

@@ -28,16 +28,15 @@ function Register(): JSX.Element {
   const reducer = auth.getRegisterReducer();
   const [state, dispatch] = useReducer(reducer, defaultState);
   const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error>();
   const { t } = useTranslation();
   const history = useHistory();
 
   async function register(info: RegisterState) {
     setLoading(true);
     try {
-      const [registerError] = await auth.register(info);
-      if (registerError) throw registerError;
-      else history.push('/dashboard');
+      await auth.register(info);
+      history.push('/dashboard');
     } catch (e) {
       setError(e);
     } finally {
@@ -55,7 +54,7 @@ function Register(): JSX.Element {
               <ErrorBox
                 error={t('error.LOGIN_FAILED')}
                 complete={error}
-                exitHandler={() => setError(null)}
+                exitHandler={() => setError(undefined)}
               />
             )}
             <Input

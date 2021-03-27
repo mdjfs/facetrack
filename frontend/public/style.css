@@ -45,3 +45,9 @@ body {
 * {
   outline: none;
 }
+
+:root {
+  --color-primary: #32aaf8;
+  --color-secondary: #b1e0fe;
+  --color-tertiary: #94d3fc;
+}

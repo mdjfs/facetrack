@@ -7,7 +7,6 @@ import * as config from '../config.json';
 import Device, { DeviceT, RegisteredT } from './device';
 
 const auth = new Auth();
-const deviceController = new Device();
 
 interface CameraData {
   id: number;
@@ -21,11 +20,13 @@ class Camera {
 
   user: User;
 
-  connectError: Error | null = null;
+  connectError: Error | undefined;
 
   device: RegisteredT | undefined;
 
   initialized = false;
+
+  deviceController: Device;
 
   constructor(
     id: number | null = null,
@@ -35,24 +36,27 @@ class Camera {
     this.user = user || auth.getUser();
     if (id) this.id = id;
     if (name) this.name = name;
+    this.deviceController = new Device();
   }
 
   private loadDevice(): RegisteredT {
-    const device = deviceController.getByCamera(this);
+    const device = this.deviceController.getByCamera(this);
     if (device) return device;
     throw new Error('No device.');
   }
 
   getDevice(): RegisteredT {
+    if (this.hasError()) return this.loadDevice();
     return this.device || this.loadDevice();
   }
 
   async connect(): Promise<void> {
-    this.device = this.getDevice();
-    const { device } = this.device;
     try {
+      this.device = this.getDevice();
+      const { device, profile } = this.device;
       await device.init();
-      this.connectError = null;
+      device.changeProfile(profile);
+      this.connectError = undefined;
     } catch (e) {
       this.connectError = e as Error;
     } finally {
@@ -67,11 +71,11 @@ class Camera {
     return this.initialized && !this.hasError();
   }
 
-  hasError(): Error | null {
+  hasError(): Error | undefined {
     return this.connectError;
   }
 
-  async getSnapshot(): Promise<Snapshot | undefined> {
+  async getSnapshot(): Promise<Snapshot> {
     let error: Error | undefined;
     let snap: Snapshot | undefined;
     try {
@@ -82,51 +86,55 @@ class Camera {
       error = e as Error;
     }
     if (error) throw error;
-    return snap;
+    if (!snap) throw new Error('No snap.');
+    else return snap;
   }
 
-  async create(name: string): Promise<[Error | null, Camera | null]> {
-    try {
-      const response = await fetch(`${config.API_URL}/cameras`, {
-        headers: this.user.headers,
-        method: 'POST',
-        body: JSON.stringify({
-          name,
-        }),
-      });
-      if (response.status !== 200) {
-        const text = await response.text();
-        throw new Error(text);
-      } else {
-        const json: CameraData = (await response.json()) as CameraData;
-        const camera = new Camera(json.id, json.name, this.user);
-        return [null, camera];
-      }
-    } catch (e) {
-      return [e, null];
+  async delete(): Promise<void> {
+    const response = await fetch(`${config.API_URL}/cameras?id=${this.id}`, {
+      headers: this.user.headers,
+      method: 'DELETE',
+    });
+    if (response.status !== 200) {
+      const text = await response.text();
+      throw new Error(text);
     }
   }
 
-  async getAll(): Promise<[Error | null, Camera[] | null]> {
-    try {
-      const response = await fetch(`${config.API_URL}/cameras`, {
-        headers: this.user.headers,
-        method: 'GET',
-      });
-      if (response.status !== 200) {
-        const text = await response.text();
-        throw new Error(text);
-      } else {
-        const json: CameraData[] = (await response.json()) as CameraData[];
-        const cameras: Camera[] = [];
-        for (const record of json) {
-          const camera = new Camera(record.id, record.name, this.user);
-          cameras.push(camera);
-        }
-        return [null, cameras];
+  async create(name: string): Promise<Camera> {
+    const response = await fetch(`${config.API_URL}/cameras`, {
+      headers: this.user.headers,
+      method: 'POST',
+      body: JSON.stringify({
+        name,
+      }),
+    });
+    if (response.status !== 200) {
+      const text = await response.text();
+      throw new Error(text);
+    } else {
+      const json: CameraData = (await response.json()) as CameraData;
+      const camera = new Camera(json.id, json.name, this.user);
+      return camera;
+    }
+  }
+
+  async getAll(): Promise<Camera[]> {
+    const response = await fetch(`${config.API_URL}/cameras`, {
+      headers: this.user.headers,
+      method: 'GET',
+    });
+    if (response.status !== 200) {
+      const text = await response.text();
+      throw new Error(text);
+    } else {
+      const json: CameraData[] = (await response.json()) as CameraData[];
+      const cameras: Camera[] = [];
+      for (const record of json) {
+        const camera = new Camera(record.id, record.name, this.user);
+        cameras.push(camera);
       }
-    } catch (e) {
-      return [e, null];
+      return cameras;
     }
   }
 }
@@ -134,11 +142,13 @@ class Camera {
 class DemoCamera extends Camera {
   constructor(device: DeviceT, user: string, pass: string) {
     super();
+    const profile = device.device.getCurrentProfile();
     this.device = {
       ...device,
       user,
       pass,
       camera: this,
+      profile: profile.token,
     };
   }
 }

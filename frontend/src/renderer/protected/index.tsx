@@ -1,6 +1,7 @@
-import Main from "./main";
-import Dashboard from "./dashboard";
-import Detect from "./detect";
-import NewDevice from "./new-device";
-export { Main, Dashboard, Detect, NewDevice };
-export default { Main, Dashboard, Detect, NewDevice };
+import Dashboard from './dashboard';
+import Detect from './detect';
+import NewDevice from './new-device';
+import Persons from './persons';
+
+export { Dashboard, Detect, NewDevice, Persons };
+export default { Dashboard, Detect, NewDevice, Persons };

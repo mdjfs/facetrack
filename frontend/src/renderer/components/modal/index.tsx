@@ -6,13 +6,18 @@ import './modal.css';
 interface ModalProps {
   children: React.ReactNode;
   exitHandler: React.MouseEventHandler<SVGSVGElement | HTMLDivElement>;
+  className?: string;
 }
 
-function Modal({ children, exitHandler }: ModalProps): JSX.Element {
+function Modal({
+  children,
+  exitHandler,
+  className = '',
+}: ModalProps): JSX.Element {
   return (
     <>
       <div className="app-modal-background" onClick={exitHandler} />
-      <div className="app-modal">
+      <div className={`app-modal ${className}`}>
         <FontAwesomeIcon
           className="app-modal-exit"
           icon={faTimes}

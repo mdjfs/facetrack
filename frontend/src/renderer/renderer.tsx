@@ -18,7 +18,7 @@ import {
 import { Home, Login, Register } from './public';
 
 import AuthController from './controllers/auth';
-import { Dashboard, Detect, NewDevice } from './protected';
+import { Dashboard, Detect, NewDevice, Persons } from './protected';
 
 const auth = new AuthController();
 
@@ -42,6 +42,7 @@ function Routes(): JSX.Element {
 
         <Route exact path="/dashboard" render={guard(<Dashboard />)} />
         <Route exact path="/detect" render={guard(<Detect />)} />
+        <Route exact path="/persons" render={guard(<Persons />)} />
         <Route
           exact
           path="/new-device/:id"
