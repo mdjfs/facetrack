@@ -196,6 +196,7 @@ router.post(
   async (req: UserRequest, res) => {
     try {
       if (req.query.personId) {
+        console.log(req.files);
         const personId = parseInt(req.query.personId.toString());
         for (const file of req.files as Express.Multer.File[]) {
           await Face.create(
