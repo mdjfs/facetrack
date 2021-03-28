@@ -17,12 +17,29 @@ import {
 } from 'react-router-dom';
 import { Home, Login, Register } from './public';
 
-import AuthController from './controllers/auth';
+import { Auth } from './controllers/auth';
 import { Dashboard, Detect, NewDevice, Persons } from './protected';
+import { User } from './controllers/user';
+import { DetectionWorker } from './controllers/detection';
 
-const auth = new AuthController();
+const auth = new Auth();
 
 type newDeviceParams = { id: string };
+
+let worker: DetectionWorker;
+
+export function startWorker(user: User): void {
+  worker = new DetectionWorker(user);
+}
+
+export function restartWorker(keepProcess = true): void {
+  worker = worker.restartWorker(keepProcess);
+}
+
+if (auth.isLogged()) {
+  const user = auth.getUser();
+  startWorker(user);
+}
 
 function Routes(): JSX.Element {
   function guard(component: JSX.Element) {

@@ -1,10 +1,9 @@
 import { Snapshot } from 'node-onvif-ts';
 
-import Auth from './auth';
-import User from './user';
-
 import * as config from '../config.json';
-import Device, { DeviceT, RegisteredT } from './device';
+import Auth from './auth';
+import { User } from './user';
+import { DeviceT, RegisteredT, Device } from './device';
 
 const auth = new Auth();
 
@@ -28,14 +27,14 @@ class Camera {
 
   deviceController: Device;
 
+  charged = false;
+
   constructor(
-    id: number | null = null,
-    name: string | null = null,
-    user: User | null = null,
+    data: CameraData | undefined = undefined,
+    user: User | undefined = undefined,
   ) {
     this.user = user || auth.getUser();
-    if (id) this.id = id;
-    if (name) this.name = name;
+    if (data) this.chargeData(data);
     this.deviceController = new Device();
   }
 
@@ -114,9 +113,49 @@ class Camera {
       throw new Error(text);
     } else {
       const json: CameraData = (await response.json()) as CameraData;
-      const camera = new Camera(json.id, json.name, this.user);
+      const camera = new Camera(json, this.user);
       return camera;
     }
+  }
+
+  private chargeData(data: CameraData): void {
+    const { id, name } = data;
+    this.id = id;
+    this.name = name;
+    this.charged = true;
+  }
+
+  private chargedData(): CameraData {
+    return {
+      id: this.id,
+      name: this.name,
+    };
+  }
+
+  private async loadData(id: number): Promise<CameraData> {
+    const response = await fetch(`${config.API_URL}/cameras?id=${id}`, {
+      headers: this.user.headers,
+      method: 'GET',
+    });
+    if (response.status !== 200) {
+      const text = await response.text();
+      throw new Error(text);
+    } else {
+      const json: CameraData = (await response.json()) as CameraData;
+      this.chargeData(json);
+      return json;
+    }
+  }
+
+  setId(id: number): void {
+    this.id = id;
+  }
+
+  async getData(): Promise<CameraData> {
+    const data = this.charged
+      ? this.chargedData()
+      : await this.loadData(this.id);
+    return data;
   }
 
   async getAll(): Promise<Camera[]> {
@@ -131,7 +170,7 @@ class Camera {
       const json: CameraData[] = (await response.json()) as CameraData[];
       const cameras: Camera[] = [];
       for (const record of json) {
-        const camera = new Camera(record.id, record.name, this.user);
+        const camera = new Camera(record, this.user);
         cameras.push(camera);
       }
       return cameras;
@@ -141,7 +180,7 @@ class Camera {
 
 class DemoCamera extends Camera {
   constructor(device: DeviceT, user: string, pass: string) {
-    super();
+    super(undefined, undefined);
     const profile = device.device.getCurrentProfile();
     this.device = {
       ...device,

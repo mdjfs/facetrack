@@ -1,8 +1,8 @@
+import Store from 'electron-store';
 import * as config from '../config.json';
-import User from './user';
-import Store from './store';
+import { User } from './user';
 
-interface RegisterState {
+export interface RegisterState {
   names: string;
   surnames: string;
   email: string;
@@ -10,26 +10,28 @@ interface RegisterState {
   username: string;
 }
 
-type RegisterAction =
+export type RegisterAction =
   | { type: 'setNames'; payload: string }
   | { type: 'setSurnames'; payload: string }
   | { type: 'setEmail'; payload: string }
   | { type: 'setPassword'; payload: string }
   | { type: 'setUsername'; payload: string };
 
-interface LoginState {
+export interface LoginState {
   email?: string;
   username?: string;
   password: string;
 }
 
-type LoginAction =
+export type LoginAction =
   | { type: 'setEmail'; payload: string }
   | { type: 'setPassword'; payload: string }
   | { type: 'setUsername'; payload: string };
 
-class Auth {
-  store = Store;
+export { Auth };
+
+export default class Auth {
+  store = new Store();
 
   headers: Headers;
 
@@ -160,8 +162,11 @@ class Auth {
   }
 
   getUser(): User {
-    const user = this.store.get('user') as User;
-    return new User(this.getToken(), user.data);
+    if (this.isLogged()) {
+      const user = this.store.get('user') as User;
+      return new User(this.getToken(), user.data);
+    }
+    throw new Error('User not logged.');
   }
 
   getToken(): string {
@@ -172,6 +177,3 @@ class Auth {
     this.store.delete('user-token');
   }
 }
-
-export { Auth, LoginAction, RegisterAction, RegisterState, LoginState };
-export default Auth;

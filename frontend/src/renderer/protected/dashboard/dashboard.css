@@ -69,9 +69,11 @@
   position: relative;
 }
 
-.stream-modal .app-stream {
+.stream-modal .camera-stream {
   width: 80%;
   position: relative;
+  height: 50vh;
+  left: 10%;
 }
 
 .error-loading-cameras {

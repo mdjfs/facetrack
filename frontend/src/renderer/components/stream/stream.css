@@ -52,3 +52,23 @@ img.image-loaded {
   color: #32aaf8;
   left: 0;
 }
+
+.detect-faces-container {
+  position: relative;
+}
+
+.detect-faces-container img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.detect-faces-container canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}

@@ -1,6 +1,6 @@
+import Store from 'electron-store';
 import { OnvifDevice, Probe, startProbe } from 'node-onvif-ts';
-import Camera from './camera';
-import Store from './store';
+import { Camera } from './camera';
 
 interface DeviceT {
   probe: Probe;
@@ -15,7 +15,7 @@ interface RegisteredT extends DeviceT {
 }
 
 class Device {
-  store = Store;
+  store = new Store();
 
   devices: DeviceT[];
 
@@ -142,6 +142,7 @@ class Device {
   updateDevices(): void {
     this.store.set('devices-recorded', this.devices);
     this.store.set('devices-registered', this.devicesRegistered);
+    console.log(this.store.get('devices-registered'));
   }
 
   getDeviceById(id: string): DeviceT | undefined {

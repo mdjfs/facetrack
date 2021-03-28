@@ -73,7 +73,12 @@ function Dashboard(): JSX.Element {
       {focusedCamera && (
         <Modal exitHandler={() => setFocusedCamera(undefined)}>
           <div className="stream-modal">
-            <Stream camera={focusedCamera} latency={100} />
+            <Stream
+              camera={focusedCamera}
+              latency={500}
+              detectFaces
+              className="camera-stream"
+            />
             <h1>{focusedCamera.name}</h1>
           </div>
         </Modal>
