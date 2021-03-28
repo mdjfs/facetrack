@@ -12,15 +12,18 @@ interface DetectionData {
   until: Date;
   cameraId: number;
   personId: number;
+  registered: boolean;
 }
 
 async function create(data: DetectionData) {
-  await Detection.create({
+  const detection = await Detection.create({
     since: data.since,
     until: data.until,
     cameraId: data.cameraId,
     personId: data.personId,
+    registered: data.registered,
   });
+  return detection;
 }
 
 async function update(id: number, until: Date) {
