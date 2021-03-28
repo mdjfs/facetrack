@@ -4,6 +4,8 @@ import * as sharp from 'sharp';
 import { FaceDetection, SsdMobilenetv1Options } from 'face-api.js';
 import { ImageData } from 'canvas';
 
+import * as config from '../config.json';
+
 const networks = {
   ssdMobilenetv1: path.join(__dirname, './networks/ssd_mobilenetv1'),
   faceRecognition: path.join(__dirname, './networks/face_recognition'),
@@ -42,6 +44,14 @@ export interface FaceMatch {
 }
 
 export class Recognition {
+  minConfidence = 0.15;
+
+  constructor() {
+    if (config && config.FACE_MIN_CONFIDENCE) {
+      this.minConfidence = config.FACE_MIN_CONFIDENCE as number;
+    }
+  }
+
   async init(): Promise<void> {
     if (!loaded) await loadModels();
   }
@@ -60,10 +70,7 @@ export class Recognition {
       height: image.offsetHeight,
     };
     faceapi.matchDimensions(canvas, dimensions);
-    const detections: FaceDetection[] = await faceapi.detectAllFaces(
-      image,
-      new SsdMobilenetv1Options({ minConfidence: 0.1 }),
-    );
+    const detections = await this.detectAllFaces(image);
     const resizedDetections = faceapi.resizeResults(detections, dimensions);
     faceapi.draw.drawDetections(canvas, resizedDetections);
   }
@@ -72,13 +79,20 @@ export class Recognition {
   async getFaces(input: Buffer, mimetype = 'image/jpeg'): Promise<FaceT[]> {
     await this.init();
     const img = this.getImage(input, mimetype);
-    const detections: FaceDetection[] = await faceapi.detectAllFaces(img);
+    const detections: FaceDetection[] = await this.detectAllFaces(img);
     const faces: FaceT[] = [];
     for (const detection of detections) {
       const face = await this.crop(input, detection.box, {
         mimetype,
       });
-      faces.push(face);
+      try {
+        const singleImg = this.getImage(face.buffer, face.mimetype);
+        const singleDetect = await this.detectSingleFace(singleImg);
+        if (singleDetect && singleDetect.descriptor) faces.push(face);
+      } catch (e) {
+        const error = e as Error;
+        console.log(`Error detecting face: ${error.message}`);
+      }
     }
     return faces;
   }
@@ -89,21 +103,34 @@ export class Recognition {
     return img;
   }
 
+  private async detectAllFaces(image: HTMLImageElement) {
+    const detections: FaceDetection[] = await faceapi.detectAllFaces(
+      image,
+      new SsdMobilenetv1Options({ minConfidence: this.minConfidence }),
+    );
+    return detections;
+  }
+
+  private async detectSingleFace(image: HTMLImageElement) {
+    const face = await faceapi
+      .detectSingleFace(
+        image,
+        new SsdMobilenetv1Options({ minConfidence: this.minConfidence }),
+      )
+      .withFaceLandmarks()
+      .withFaceDescriptor();
+    return face;
+  }
+
   /** compare two faces */
   async compareFaces(input: FaceT, target: FaceT): Promise<FaceMatch> {
     await this.init();
     const decodedInput = this.getImage(input.buffer, input.mimetype);
     const decodedTarget = this.getImage(target.buffer, target.mimetype);
-    const detectInput = await faceapi
-      .detectSingleFace(decodedInput)
-      .withFaceLandmarks()
-      .withFaceDescriptor();
-    const detectTarget = await faceapi
-      .detectSingleFace(decodedTarget)
-      .withFaceLandmarks()
-      .withFaceDescriptor();
-    const matcher = new faceapi.FaceMatcher(detectInput);
-    if (detectTarget) {
+    const detectInput = await this.detectSingleFace(decodedInput);
+    const detectTarget = await this.detectSingleFace(decodedTarget);
+    if (detectInput && detectTarget) {
+      const matcher = new faceapi.FaceMatcher(detectInput);
       const match = matcher.findBestMatch(detectTarget.descriptor);
       return {
         confidence: match.distance,

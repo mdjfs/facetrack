@@ -196,13 +196,11 @@ export class DetectionWorker {
     this.cameraController = new Camera(undefined, this.user);
     this.detectionController = new Detection(undefined, this.user);
     if (config && config.MAX_MINUTES_TIMEOUT_PER_CAMERA) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.maxMinutes = config.MAX_MINUTES_TIMEOUT_PER_CAMERA;
     } else {
       this.maxMinutes = 30;
     }
     if (config && config.MS_PER_PHOTO_CAMERA) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.cameraDelay = config.MS_PER_PHOTO_CAMERA;
     } else {
       this.cameraDelay = 500;
@@ -243,10 +241,17 @@ export class DetectionWorker {
         }, msWait);
       } else {
         const photo = await camera.getSnapshot();
-        const faces = await recognition.getFaces(
-          photo.body,
-          photo.headers['content-type'],
-        );
+        let faces: FaceT[] = [];
+        console.log('Scanning...');
+        try {
+          faces = await recognition.getFaces(
+            photo.body,
+            photo.headers['content-type'],
+          );
+        } catch (e) {
+          const error = e as Error;
+          console.log(`Scanning error: ${error.message}`);
+        }
         for (const face of faces) {
           this.faceTasks.push({
             camera,
@@ -263,11 +268,12 @@ export class DetectionWorker {
   async save(task: FaceTask, personFound: Person): Promise<void> {
     const now: Date = new Date();
     this.endTasks = this.endTasks.filter(
-      (endTask) => now.getTime() - endTask.date.getTime() >= 5 * 1000,
+      (endTask) => now.getTime() - endTask.date.getTime() <= 5 * 60000,
     );
     const [personTask] = this.endTasks.filter(
       (endTask) => endTask.person.id === personFound.id,
     );
+    console.log(personTask, personFound.id);
     if (personTask) {
       await personTask.detection.update(now);
     } else {
@@ -282,7 +288,7 @@ export class DetectionWorker {
         ...task,
         person: personFound,
         detection,
-        date: now,
+        date: new Date(),
       });
     }
   }
@@ -317,14 +323,15 @@ export class DetectionWorker {
   listenFaces(): void {
     if (!this.stopped) {
       if (this.faceTasks.length > 0) {
-        const face = this.faceTasks[this.faceTasks.length - 1];
+        const face = this.faceTasks.pop() as FaceTask;
+        console.log(`New task in camera ${face.camera.id}`);
         this.detect(face).finally(() => {
           this.listenFaces();
         });
       } else {
         setTimeout(() => {
           this.listenFaces();
-        }, 1000);
+        }, this.cameraDelay);
       }
     }
   }

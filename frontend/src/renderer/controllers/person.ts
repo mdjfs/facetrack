@@ -35,6 +35,8 @@ export class Person {
 
   charged = false;
 
+  updatedFaces = false;
+
   constructor(data: PersonData | undefined, user: User | undefined) {
     this.user = user || auth.getUser();
     if (data) this.chargeData(data);
@@ -74,11 +76,11 @@ export class Person {
         i += 1;
         if (i >= this.maxRecognition || i >= faces.length) doNext = false;
       } while (doNext);
-      let matched = false;
+      let matched = true;
       for (const index of facesIndex) {
         const input = faces[index];
         const match = await recognition.compareFaces(input, face);
-        if (match.matched) matched = true;
+        if (!match.matched) matched = false;
       }
       return matched;
     }
@@ -95,18 +97,25 @@ export class Person {
 
   async addFace(face: FaceT | FaceT[]): Promise<void> {
     const form = new FormData();
+    const headers = new Headers();
+    headers.set('Authorization', auth.getToken());
     if (Array.isArray(face)) {
       for (let i = 0; i < face.length; i += 1) {
         form.append(
-          `face-${i}`,
+          'photos',
           this.bufferToBlob(face[i].buffer, face[i].mimetype),
+          'photo.jpg',
         );
       }
     } else {
-      form.append('face-0', this.bufferToBlob(face.buffer, face.mimetype));
+      form.append(
+        'photos',
+        this.bufferToBlob(face.buffer, face.mimetype),
+        'photo.jpg',
+      );
     }
     const response = await fetch(`${config.API_URL}/face?personId=${this.id}`, {
-      headers: this.user.headers,
+      headers,
       method: 'POST',
       body: form,
     });
@@ -114,12 +123,17 @@ export class Person {
       const text = await response.text();
       throw new Error(text);
     }
+
+    this.updatedFaces = true;
   }
 
   async getFaces(): Promise<FaceT[]> {
-    if (this.faces) return this.faces;
-    const faces = await this.loadFaces();
-    return faces;
+    if (this.updatedFaces || !this.faces) {
+      const faces = await this.loadFaces();
+      this.updatedFaces = false;
+      return faces;
+    }
+    return this.faces;
   }
 
   async getDetections(): Promise<Detection[]> {
