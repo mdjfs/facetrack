@@ -29,6 +29,8 @@ class Camera {
 
   charged = false;
 
+  hasRefresh = false;
+
   constructor(
     data: CameraData | undefined = undefined,
     user: User | undefined = undefined,
@@ -38,20 +40,27 @@ class Camera {
     this.deviceController = new Device();
   }
 
-  private loadDevice(): RegisteredT {
+  private async loadDevice(): Promise<RegisteredT> {
+    if (!this.hasRefresh) {
+      await this.deviceController.refresh();
+      this.hasRefresh = true;
+    }
     const device = this.deviceController.getByCamera(this);
     if (device) return device;
     throw new Error('No device.');
   }
 
-  getDevice(): RegisteredT {
-    if (this.hasError()) return this.loadDevice();
+  async getDevice(): Promise<RegisteredT> {
+    if (this.hasError()) {
+      const device = await this.loadDevice();
+      return device;
+    }
     return this.device || this.loadDevice();
   }
 
   async connect(): Promise<void> {
     try {
-      this.device = this.getDevice();
+      this.device = await this.getDevice();
       const { device, profile } = this.device;
       await device.init();
       device.changeProfile(profile);
@@ -78,7 +87,7 @@ class Camera {
     let error: Error | undefined;
     let snap: Snapshot | undefined;
     try {
-      const { device } = this.getDevice();
+      const { device } = await this.getDevice();
       snap = await device.fetchSnapshot();
     } catch (e) {
       this.connectError = e as Error;

@@ -18,13 +18,20 @@ import {
 import { Home, Login, Register } from './public';
 
 import { Auth } from './controllers/auth';
-import { Dashboard, Detect, NewDevice, Persons } from './protected';
+import {
+  Dashboard,
+  Detect,
+  NewDevice,
+  PersonDetail,
+  Persons,
+} from './protected';
 import { User } from './controllers/user';
 import { DetectionWorker } from './controllers/detection';
 
 const auth = new Auth();
 
 type newDeviceParams = { id: string };
+type personDetailParams = { id: string };
 
 let worker: DetectionWorker;
 
@@ -66,6 +73,24 @@ function Routes(): JSX.Element {
           render={({ match }: RouteComponentProps<newDeviceParams>) => {
             const component = <NewDevice paramId={match.params.id} />;
             return guard(component)();
+          }}
+        />
+        <Route
+          exact
+          path="/person/:id"
+          render={({ match }: RouteComponentProps<personDetailParams>) => {
+            const param = match.params.id;
+            if (!param) return <Redirect to="/persons" />;
+            if (param === 'new') {
+              const component = <PersonDetail new />;
+              return guard(component)();
+            }
+            const id = parseInt(param, 10);
+            if (!Number.isNaN(id)) {
+              const component = <PersonDetail id={id} />;
+              return guard(component)();
+            }
+            return <Redirect to="/persons" />;
           }}
         />
       </Switch>

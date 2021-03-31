@@ -1,0 +1,71 @@
+.person-detail-header {
+  width: 80%;
+  left: 10%;
+  border-bottom: solid 2px rgba(128, 128, 128, 0.151);
+  position: relative;
+  text-align: center;
+  font-size: 2em;
+  color: black;
+}
+
+.person-faces {
+  width: 80%;
+  position: relative;
+  left: 10%;
+  text-align: center;
+}
+
+.delete-face {
+  color: var(--color-tertiary);
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  z-index: 1;
+  cursor: pointer;
+  transition: all 1s;
+}
+
+.delete-face:hover {
+  transform: scale(1.1);
+  opacity: 0.7;
+}
+
+.person-faces .app-card {
+  width: 8em;
+  height: 8em;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+.person-faces .app-card img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.app-card-add {
+  width: 100% !important;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(0.3);
+  cursor: pointer;
+  color: #e3e3e3;
+}
+
+.app-card-add:hover {
+  opacity: 0.7;
+}
+
+.faces-modal {
+  text-align: center;
+}
+
+.button-container {
+  text-align: center;
+}

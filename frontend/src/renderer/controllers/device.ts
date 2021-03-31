@@ -22,10 +22,13 @@ class Device {
   devicesRegistered: RegisteredT[];
 
   constructor() {
-    const devices = this.store.get('devices-recorded') as DeviceT[];
-    const registered = this.store.get('devices-registered') as RegisteredT[];
-    this.devices = this.chargeDevice(devices || []);
-    this.devicesRegistered = this.chargeRegistered(registered || []);
+    this.store.reset();
+    const devices = this.store.get('devices-recorded', false);
+    const registered = this.store.get('devices-registered', false);
+    this.devices = this.chargeDevice((devices as DeviceT[]) || []);
+    this.devicesRegistered = this.chargeRegistered(
+      (registered as RegisteredT[]) || [],
+    );
   }
 
   private chargeDevice(device: DeviceT | DeviceT[]): DeviceT[] {
@@ -54,36 +57,35 @@ class Device {
     return [charge(device)];
   }
 
-  add(device: DeviceT | DeviceT[]): void {
-    const ids = this.devices.map((item: DeviceT) => item.probe.urn);
-    const addDevice = (item: DeviceT) => {
-      if (!ids.includes(item.probe.urn)) {
-        this.devices.push(item);
-      }
-    };
-    if (Array.isArray(device)) {
-      for (const item of device) addDevice(item);
-    } else addDevice(device);
-    this.updateDevices();
-  }
-
   async scan(): Promise<DeviceT[]> {
     const probes = await startProbe();
     const devices: DeviceT[] = probes.map((probe) => ({
       probe,
       device: new OnvifDevice({ xaddr: probe.xaddrs[0] }),
     }));
-    this.add(devices);
+    this.devices = devices;
+    this.updateDevices();
     return devices;
   }
 
   async refresh(): Promise<void> {
-    const probes = await startProbe();
-    const probesId = probes.map((probe) => probe.urn);
-    this.devices = this.devices.filter((device) => {
-      const hasDevice = probesId.includes(device.probe.urn);
-      return hasDevice;
-    });
+    const devices = await this.scan();
+    for (let i = 0; i < this.devicesRegistered.length; i += 1) {
+      for (const device of devices) {
+        const registered = this.devicesRegistered[i];
+        if (registered.probe.urn === device.probe.urn) {
+          this.devicesRegistered[i] = {
+            ...registered,
+            device: new OnvifDevice({
+              xaddr: device.probe.xaddrs[0],
+              user: registered.user,
+              pass: registered.pass,
+            }),
+            probe: device.probe,
+          };
+        }
+      }
+    }
     this.updateDevices();
   }
 
@@ -140,9 +142,14 @@ class Device {
   }
 
   updateDevices(): void {
+    this.store.set('devices-recorded', []);
+    this.store.set('devices-registered', []);
     this.store.set('devices-recorded', this.devices);
     this.store.set('devices-registered', this.devicesRegistered);
-    console.log(this.store.get('devices-registered'));
+
+    const one = this.store.get('devices-recorded', false);
+    const two = this.store.get('devices-registered', false);
+    console.log(one, this.devices);
   }
 
   getDeviceById(id: string): DeviceT | undefined {

@@ -212,7 +212,12 @@ export class DetectionWorker {
     this.persons = await this.personController.getAll();
     this.cameras = await this.cameraController.getAll();
     for (const camera of this.cameras) {
-      await camera.connect();
+      try {
+        await camera.connect();
+      } catch (e) {
+        const error = e as Error;
+        console.log(`Camera connecting error: ${error.message}`);
+      }
     }
     void this.startWorker();
   }

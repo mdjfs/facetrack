@@ -1,0 +1,33 @@
+.image-picker-container {
+  width: 100%;
+  position: relative;
+  text-align: center;
+  display: table;
+}
+
+.pick-img-container {
+  display: table-cell;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.pick-img {
+  box-shadow: 1px 1px 9px 0px grey;
+}
+
+.pick-img.picked {
+  box-shadow: 1px 1px 9px 0px var(--color-primary);
+}
+
+.pick-img-container.picked::before {
+  content: '✓';
+  background-color: var(--color-primary);
+  position: absolute;
+  border-radius: 50%;
+  color: white;
+  margin-top: 1%;
+  margin-left: 1%;
+  font-size: 1em;
+  width: 1.5em;
+  box-shadow: 1px 1px 4px -1px black;
+}

@@ -11,7 +11,7 @@ import Stream from './stream';
 import Tooltip from './tooltip';
 import NoticeBox from './noticebox';
 import Confirm, { ConfirmProps } from './confirm';
-
+import ImagePicker, { PickImage } from './image-picker';
 export {
   Button,
   Link as CustomLink,
@@ -27,6 +27,8 @@ export {
   NoticeBox,
   Confirm,
   ConfirmProps,
+  ImagePicker,
+  PickImage,
 };
 export default {
   Button,
@@ -42,4 +44,5 @@ export default {
   Tooltip,
   NoticeBox,
   Confirm,
+  ImagePicker,
 };

@@ -10,6 +10,8 @@ interface inputProps {
   placeholder: string;
   handler: CallableFunction;
   password?: boolean;
+  invisible?: boolean;
+  defaultContent?: string;
 }
 
 function Input({
@@ -19,6 +21,8 @@ function Input({
   placeholder,
   handler,
   password = false,
+  invisible = false,
+  defaultContent = undefined,
 }: inputProps): JSX.Element {
   const [error, setError] = useState(false);
 
@@ -36,8 +40,11 @@ function Input({
   };
 
   return (
-    <div className={`input-container ${error ? 'error' : ''}`}>
-      <div className="input-name">{`${name}:`}</div>
+    <div
+      className={`input-container ${error ? 'error' : ''} ${
+        invisible ? 'invisible' : ''
+      }`}>
+      {!invisible && <div className="input-name">{`${name}:`}</div>}
       {error && validatorMessage ? (
         <div className="input-error">{`* ${validatorMessage}`}</div>
       ) : (
@@ -52,6 +59,7 @@ function Input({
           type={password ? 'password' : 'text'}
           onChange={onInput}
           placeholder={placeholder}
+          value={defaultContent}
         />
       </div>
     </div>

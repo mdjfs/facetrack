@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 import Camera from '_/renderer/controllers/camera';
 import './dashboard.css';
+import { cancelable } from 'cancelable-promise';
 
 const cameraController = new Camera();
 
@@ -46,7 +47,10 @@ function Dashboard(): JSX.Element {
   }
 
   useEffect(() => {
-    void loadCameras();
+    const promise = cancelable(loadCameras());
+    return () => {
+      promise.cancel();
+    };
   }, []);
 
   return (

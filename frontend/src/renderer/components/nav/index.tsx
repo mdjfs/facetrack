@@ -50,6 +50,7 @@ function Nav(): JSX.Element {
         <div className="nav-link-container">
           {links.map((link, index) => (
             <Link
+              key={`nav-link-${link.name}${link.link}`}
               className={`nav-link ${
                 index <= 5 ? `nav-index-${index}` : 'nav-hidden'
               } ${link.link === pathname ? 'focused' : ''}`}

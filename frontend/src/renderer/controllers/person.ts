@@ -15,6 +15,10 @@ export interface PersonData extends PersonGeneralData {
   id: number;
 }
 
+export interface RegisteredFace extends FaceT {
+  id: number;
+}
+
 const auth = new Auth();
 const recognition = new Recognition();
 
@@ -25,7 +29,7 @@ export class Person {
 
   surnames: string;
 
-  faces: FaceT[] | undefined;
+  faces: RegisteredFace[] | undefined;
 
   user: User;
 
@@ -37,7 +41,10 @@ export class Person {
 
   updatedFaces = false;
 
-  constructor(data: PersonData | undefined, user: User | undefined) {
+  constructor(
+    data: PersonData | undefined = undefined,
+    user: User | undefined = undefined,
+  ) {
     this.user = user || auth.getUser();
     if (data) this.chargeData(data);
     this.maxRecognition = config.MAX_RECOGNITION_PER_PERSON;
@@ -93,6 +100,19 @@ export class Person {
       { type: mimetype },
     );
     return blob;
+  }
+
+  async deleteFace(id: number): Promise<void> {
+    const response = await fetch(`${config.API_URL}/face?id=${id}`, {
+      headers: this.user.headers,
+      method: 'DELETE',
+    });
+    if (response.status !== 200) {
+      const text = await response.text();
+      throw new Error(text);
+    }
+
+    this.updatedFaces = true;
   }
 
   async addFace(face: FaceT | FaceT[]): Promise<void> {
@@ -183,7 +203,7 @@ export class Person {
       throw new Error(text);
     } else {
       const ids: number[] = (await response.json()) as number[];
-      const faces: FaceT[] = [];
+      const faces: RegisteredFace[] = [];
       for (const id of ids) {
         const imageResponse = await fetch(`${config.API_URL}/face?id=${id}`, {
           headers: this.user.headers,
@@ -198,6 +218,7 @@ export class Person {
           const contentType = imageResponse.headers.get('Content-Type');
           if (contentType) {
             faces.push({
+              id,
               buffer,
               mimetype: contentType.toString(),
             });
