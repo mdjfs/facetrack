@@ -85,6 +85,10 @@ mainConfig.plugins = [
           return JSON.stringify(jsonContent, undefined, 2);
         },
       },
+      {
+        from: 'networks/',
+        to: 'networks/',
+      },
     ],
   }),
 ];

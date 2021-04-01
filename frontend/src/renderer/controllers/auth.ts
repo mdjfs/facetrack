@@ -158,19 +158,19 @@ export default class Auth {
   }
 
   isLogged(): boolean {
-    return !!this.store.get('user-token') && !!this.store.get('user');
+    return !!this.store.get('user-token', false) && !!this.store.get('user');
   }
 
   getUser(): User {
     if (this.isLogged()) {
-      const user = this.store.get('user') as User;
+      const user = this.store.get('user', false) as User;
       return new User(this.getToken(), user.data);
     }
     throw new Error('User not logged.');
   }
 
   getToken(): string {
-    return this.store.get('user-token') as string;
+    return this.store.get('user-token', false) as string;
   }
 
   logout(): void {

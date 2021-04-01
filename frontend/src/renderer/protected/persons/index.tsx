@@ -6,15 +6,13 @@ import {
   Card,
   Confirm,
   ConfirmProps,
-  Modal,
+  Gallery,
   Nav,
 } from '_/renderer/components';
 import Person, { PersonData } from '_/renderer/controllers/person';
 import './persons.css';
-import './carousel.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { Carousel } from 'react-responsive-carousel';
 import { useHistory } from 'react-router';
 
 const { useState, useEffect } = React;
@@ -29,7 +27,7 @@ interface DisplayPerson extends PersonData {
 function Persons(): JSX.Element {
   const history = useHistory();
   const { t } = useTranslation();
-  const [people, setPeople] = useState<'know' | 'unknown'>('know');
+  const [people, setPeople] = useState<'known' | 'unknown'>('known');
   const [isLoading, setLoading] = useState(false);
   const [personsData, setPersonsData] = useState<DisplayPerson[]>([]);
   const [error, setError] = useState<Error>();
@@ -102,9 +100,9 @@ function Persons(): JSX.Element {
           <div className="persons-choices">
             <button
               type="button"
-              className={people === 'know' ? 'focused' : ''}
-              onClick={() => setPeople('know')}>
-              {t('persons.choices.know')}
+              className={people === 'known' ? 'focused' : ''}
+              onClick={() => setPeople('known')}>
+              {t('persons.choices.known')}
             </button>
             <button
               type="button"
@@ -117,7 +115,7 @@ function Persons(): JSX.Element {
           <div className="persons-cards">
             {personsData
               .filter((person) => {
-                if (people === 'know') {
+                if (people === 'known') {
                   return person.registered;
                 }
                 return !person.registered;
@@ -151,15 +149,14 @@ function Persons(): JSX.Element {
                     }}
                   />
                   <div className="persons-carousel">
-                    <Carousel>
-                      {person.images.map((image) => (
-                        <div>
-                          <img src={image} alt="Person" />
-                        </div>
-                      ))}
-                    </Carousel>
+                    <Gallery
+                      images={person.images.map((image) => ({
+                        src: image,
+                        alt: 'Person',
+                      }))}
+                    />
                   </div>
-                  {people === 'know' && (
+                  {people === 'known' && (
                     <ul>
                       <li>
                         <strong>{t('persons.list.names')}:</strong>
@@ -174,20 +171,24 @@ function Persons(): JSX.Element {
                   {people === 'unknown' && <h3>{t('persons.list.unknown')}</h3>}
                   <Button
                     theme="primary"
-                    content={people === 'unknown' ? 'register' : 'edit'}
+                    content={
+                      people === 'unknown'
+                        ? t('persons.buttons.register')
+                        : t('persons.buttons.edit')
+                    }
                     onClick={() => history.push(`/person/${person.id}`)}
                   />
                   <Button
                     theme="primary"
-                    content="see detections"
+                    content={t('persons.buttons.detections')}
                     onClick={() => console.log('holi')}
                   />
                 </Card>
               ))}
-            {people === 'know' && (
+            {people === 'known' && (
               <Button
                 theme="primary"
-                content="create"
+                content={t('persons.buttons.create')}
                 onClick={() => history.push('/person/new')}
               />
             )}

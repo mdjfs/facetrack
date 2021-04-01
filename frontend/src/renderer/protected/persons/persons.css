@@ -100,3 +100,12 @@
   margin-bottom: 1%;
   position: relative;
 }
+
+ul {
+  text-align: left;
+  list-style: none;
+}
+
+li {
+  margin: 1%;
+}

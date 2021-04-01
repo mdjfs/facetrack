@@ -116,6 +116,33 @@
     "persons": "My Persons"
   },
   "persons": {
-    "header": "Your Persons"
+    "header": "Your Persons",
+    "list": {
+      "names": "Names",
+      "surnames": "Surnames"
+    },
+    "choices": {
+      "known": "Known",
+      "unknown": "Unknown"
+    },
+    "buttons": {
+      "edit": "Edit",
+      "create": "Create",
+      "register": "Register",
+      "detections": "See detections"
+    },
+    "deleteConfirm": "Are you sure to delete this person?"
+  },
+  "personDetail": {
+    "names": "Insert names",
+    "surnames": "Insert surnames",
+    "buttons": {
+      "add": "Add Person",
+      "register": "Register Person",
+      "update": "Update Person",
+      "loadFaces": "Save Faces"
+    },
+    "selectFaces": "Select Faces",
+    "deleteFace": "Are you sure to delete this face?"
   }
 }

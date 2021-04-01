@@ -12,6 +12,8 @@ import Tooltip from './tooltip';
 import NoticeBox from './noticebox';
 import Confirm, { ConfirmProps } from './confirm';
 import ImagePicker, { PickImage } from './image-picker';
+import Gallery from './gallery';
+
 export {
   Button,
   Link as CustomLink,
@@ -29,6 +31,7 @@ export {
   ConfirmProps,
   ImagePicker,
   PickImage,
+  Gallery,
 };
 export default {
   Button,
@@ -45,4 +48,5 @@ export default {
   NoticeBox,
   Confirm,
   ImagePicker,
+  Gallery,
 };

@@ -13,6 +13,8 @@
 
 .pick-img {
   box-shadow: 1px 1px 9px 0px grey;
+  max-width: 10em;
+  max-height: 10em;
 }
 
 .pick-img.picked {

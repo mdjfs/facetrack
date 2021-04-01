@@ -83,11 +83,11 @@ export class Person {
         i += 1;
         if (i >= this.maxRecognition || i >= faces.length) doNext = false;
       } while (doNext);
-      let matched = true;
+      let matched = false;
       for (const index of facesIndex) {
         const input = faces[index];
         const match = await recognition.compareFaces(input, face);
-        if (!match.matched) matched = false;
+        if (match.confidence >= 0.8) matched = true;
       }
       return matched;
     }

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { cancelable, CancelablePromiseType } from 'cancelable-promise';
-import toBuffer from 'typedarray-to-buffer';
 import {
   Button,
   Card,
@@ -23,9 +22,7 @@ import {
   faTimesCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import Recognition, { FaceT } from '_/renderer/controllers/recognition';
-import { useHistory } from 'react-router';
-
-const { useState, useEffect, useRef } = React;
+import { bufferToUrl } from '../../utils';
 
 interface DetailProps {
   id: number;
@@ -34,6 +31,8 @@ interface DetailProps {
 interface newPersonProps {
   new: boolean;
 }
+
+const { useState, useEffect, useRef } = React;
 
 const recognition = new Recognition();
 
@@ -47,27 +46,12 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
   const [selectedFaces, setSelected] = useState<FaceT[]>();
   const [names, setNames] = useState<string>();
   const [surnames, setSurnames] = useState<string>();
-  const [initialName, setInitialName] = useState<string>();
-  const [initialSurname, setInitialSurname] = useState<string>();
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  function bufferToUrl(buffer: Buffer, mimetype = 'image/jpeg'): string {
-    const base64 = btoa(
-      new Uint8Array(buffer).reduce(
-        (data, byte) => data + String.fromCharCode(byte),
-        '',
-      ),
-    );
-    return `data:${mimetype};base64,${base64}`;
-  }
-
-  async function addFaces() {
+  async function process(processAsync: () => Promise<void>): Promise<void> {
     setLoading(true);
     try {
-      if (!person) throw new Error('no person.');
-      if (!selectedFaces) throw new Error('no faces.');
-      await person.addFace(selectedFaces);
-      await person.getFaces();
-      setSelected(undefined);
+      await processAsync();
     } catch (e) {
       setError(e);
     } finally {
@@ -75,62 +59,55 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
     }
   }
 
+  async function addFaces(faces: FaceT[] | undefined = undefined) {
+    await process(async () => {
+      if (!person) throw new Error('no person.');
+      if (!selectedFaces && !faces) throw new Error('no faces.');
+      await person.addFace((selectedFaces || faces) as FaceT[]);
+      await person.getFaces();
+      setSelected(undefined);
+    });
+  }
+
   async function loadFile(file: File) {
-    setLoading(true);
-    try {
+    await process(async () => {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const faces = await recognition.getFaces(buffer, file.type);
       if (faces.length === 0) throw new Error('no faces.');
       if (!person) throw new Error('no person.');
       if (faces.length === 1) {
-        setSelected(faces);
-        await addFaces();
+        await addFaces(faces);
       } else {
         setFaces(faces);
       }
-    } catch (e) {
-      setError(e);
-    } finally {
-      setLoading(false);
-    }
+    });
   }
 
   async function deleteFace(id: number) {
-    setLoading(true);
-    try {
+    await process(async () => {
       if (!person) throw new Error('no person.');
       await person.deleteFace(id);
       await person.getFaces();
-    } catch (e) {
-      setError(e);
-    } finally {
-      setLoading(false);
-    }
+    });
   }
 
-  async function loadPerson(id: number) {
-    setLoading(true);
-    try {
+  async function load(id: number) {
+    await process(async () => {
       const target = new Person();
       target.setId(id);
       await target.getData();
       await target.getFaces();
       if (target.registered) {
-        setInitialName(target.names);
-        setInitialSurname(target.surnames);
+        setNames(target.names);
+        setSurnames(target.surnames);
       }
       setPerson(target);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setLoading(false);
-    }
+    });
   }
 
-  async function createPerson() {
-    setLoading(true);
-    try {
+  async function create() {
+    await process(async () => {
       const controller = new Person();
       if (!names || !surnames) throw new Error('No names and surnames.');
       const newPerson = await controller.create({
@@ -138,38 +115,30 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
         surnames,
         registered: true,
       });
-      await loadPerson(newPerson.id);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setLoading(false);
-    }
+      await load(newPerson.id);
+    });
   }
 
   async function update() {
-    setLoading(true);
-    try {
+    await process(async () => {
       if (!person) throw new Error('no person.');
-      const name = names || initialName;
-      const surname = surnames || initialSurname;
+      if (!names || !surnames) throw new Error('No names and surnames.');
       await person.update({
-        names: name as string,
-        surnames: surname as string,
+        names,
+        surnames,
         registered: true,
       });
-      await loadPerson(person.id);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setLoading(false);
-    }
+      await load(person.id);
+    });
   }
 
   useEffect(() => {
     const detail = props as DetailProps;
     if (detail.id) {
       const promise: CancelablePromiseType<void> = cancelable(
-        loadPerson(detail.id),
+        process(async () => {
+          await load(detail.id);
+        }),
       );
       return () => {
         promise.cancel();
@@ -183,18 +152,16 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
       <Nav />
       <div className="person-detail-header">
         <Input
-          name={t('personDetail.names')}
-          placeholder={t('personDetail.names')}
+          name={names || t('personDetail.names')}
+          placeholder={names || t('personDetail.names')}
           handler={(value: string) => setNames(value)}
           invisible
-          defaultContent={names ? undefined : initialName}
         />
         <Input
-          name={t('personDetail.surnames')}
-          placeholder={t('personDetail.surnames')}
+          name={surnames || t('personDetail.surnames')}
+          placeholder={surnames || t('personDetail.surnames')}
           handler={(value: string) => setSurnames(value)}
           invisible
-          defaultContent={surnames ? undefined : initialSurname}
         />
       </div>
 
@@ -209,7 +176,7 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
 
       {selectFaces && (
         <Modal exitHandler={() => setFaces(undefined)} className="faces-modal">
-          <h1>{t('personDetail.selectFace')}</h1>
+          <h1>{t('personDetail.selectFaces')}</h1>
           <ImagePicker
             images={selectFaces.map((face) => ({
               src: bufferToUrl(face.buffer, face.mimetype),
@@ -227,7 +194,7 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
           />
           <Button
             theme="secondary"
-            content="Load images"
+            content={t('personDetail.buttons.loadFaces')}
             onClick={async () => {
               setFaces(undefined);
               await addFaces();
@@ -282,22 +249,27 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
                     </Card>
                   ))}
                 <Card>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const element = e.target as HTMLInputElement;
+                      if (element.files && element.files.length > 0) {
+                        await loadFile(element.files[0]);
+                      } else {
+                        setError(new Error('No files'));
+                      }
+                    }}
+                    hidden
+                    ref={fileRef}
+                  />
                   <FontAwesomeIcon
                     className="app-card-add"
                     icon={faPlusSquare}
                     onClick={() => {
-                      const input = document.createElement('input');
-                      input.setAttribute('type', 'file');
-                      input.setAttribute('accept', 'image/*');
-                      input.onchange = async (e: InputEvent) => {
-                        const element = e.target as HTMLInputElement;
-                        if (element.files && element.files.length > 0) {
-                          await loadFile(element.files[0]);
-                        } else {
-                          setError(new Error('No files'));
-                        }
-                      };
-                      input.click();
+                      if (fileRef.current) {
+                        fileRef.current.click();
+                      }
                     }}
                   />
                 </Card>
@@ -305,18 +277,19 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
               <div className="button-container">
                 {names && surnames && !person.registered && (
                   <Button
-                    content="register person"
+                    content={t('personDetail.buttons.register')}
                     theme="secondary"
                     onClick={async () => {
                       await update();
                     }}
                   />
                 )}
-                {((names !== initialName && names) ||
-                  (surnames !== initialSurname && surnames)) &&
+                {names &&
+                  surnames &&
+                  (names !== person.names || surnames !== person.surnames) &&
                   person.registered && (
                     <Button
-                      content="update person"
+                      content={t('personDetail.buttons.update')}
                       theme="secondary"
                       onClick={async () => {
                         await update();
@@ -329,10 +302,10 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
           {!person && names && surnames && (
             <div className="button-container">
               <Button
-                content="add person"
+                content={t('personDetail.buttons.add')}
                 theme="secondary"
                 onClick={async () => {
-                  await createPerson();
+                  await create();
                 }}
               />
             </div>
