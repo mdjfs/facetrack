@@ -4,6 +4,8 @@ import { Person } from './person';
 import { FaceT, Recognition } from './recognition';
 import { User } from './user';
 import * as config from '../config.json';
+import Log from './log';
+import Config from './config';
 
 export interface DetectionGeneralData {
   camera: Camera;
@@ -31,8 +33,8 @@ export interface DetectionData extends DetectionGeneralData {
   id: number;
 }
 
-const recognition = new Recognition();
 const auth = new Auth();
+const configController = new Config();
 
 export class Detection {
   id: number;
@@ -49,7 +51,10 @@ export class Detection {
 
   charged = false;
 
-  constructor(data: DetectionData | undefined, user: User | undefined) {
+  constructor(
+    data: DetectionData | undefined = undefined,
+    user: User | undefined = undefined,
+  ) {
     this.user = user || auth.getUser();
     if (data) this.chargeData(data);
   }
@@ -122,9 +127,71 @@ export class Detection {
     this.id = id;
   }
 
+  async getByPerson(id: number): Promise<Detection[]> {
+    const response = await fetch(
+      `${config.API_URL}/detections?personId=${id}`,
+      {
+        headers: this.user.headers,
+        method: 'GET',
+      },
+    );
+    if (response.status !== 200) {
+      const text = await response.text();
+      throw new Error(text);
+    } else {
+      // eslint-disable-next-line max-len
+      const json: DetectionFetch[] = (await response.json()) as DetectionFetch[];
+      const detections: Detection[] = [];
+      for (const dataFetch of json) {
+        const data: DetectionData = this.loadObject(dataFetch);
+        const detection = new Detection(data, this.user);
+        detections.push(detection);
+      }
+      return detections;
+    }
+  }
+
+  async getByPage(page: number, size = 5): Promise<Detection[]> {
+    const response = await fetch(
+      `${config.API_URL}/detections?page=${page}&size=${size}`,
+      {
+        headers: this.user.headers,
+        method: 'GET',
+      },
+    );
+    if (response.status !== 200) {
+      const text = await response.text();
+      throw new Error(text);
+    } else {
+      // eslint-disable-next-line max-len
+      const json: DetectionFetch[] = (await response.json()) as DetectionFetch[];
+      const detections: Detection[] = [];
+      for (const dataFetch of json) {
+        const data: DetectionData = this.loadObject(dataFetch);
+        const detection = new Detection(data, this.user);
+        detections.push(detection);
+      }
+      return detections;
+    }
+  }
+
+  private loadObject(data: DetectionFetch): DetectionData {
+    const camera = new Camera(undefined, this.user);
+    const person = new Person(undefined, this.user);
+    camera.setId(data.cameraId);
+    person.setId(data.personId);
+    return {
+      camera,
+      person,
+      id: data.id,
+      since: new Date(data.since),
+      until: new Date(data.until),
+    };
+  }
+
   private async loadData(id: number): Promise<DetectionData> {
     const response = await fetch(`${config.API_URL}/detections?id=${id}`, {
-      headers: this.camera.user.headers,
+      headers: this.user.headers,
       method: 'GET',
     });
     if (response.status !== 200) {
@@ -132,17 +199,7 @@ export class Detection {
       throw new Error(text);
     } else {
       const json: DetectionFetch = (await response.json()) as DetectionFetch;
-      const camera = new Camera(undefined, this.user);
-      const person = new Person(undefined, this.user);
-      camera.setId(json.cameraId);
-      person.setId(json.personId);
-      const data: DetectionData = {
-        camera,
-        person,
-        id: json.id,
-        since: json.since,
-        until: json.until,
-      };
+      const data: DetectionData = this.loadObject(json);
       this.chargeData(data);
       return data;
     }
@@ -190,22 +247,20 @@ export class DetectionWorker {
 
   stopped = false;
 
+  status: 'stopped' | 'working' | 'unitialized' = 'unitialized';
+
+  logs = new Log();
+
+  recognition = new Recognition();
+
   constructor(user: User | undefined) {
     this.user = user || auth.getUser();
     this.personController = new Person(undefined, this.user);
     this.cameraController = new Camera(undefined, this.user);
     this.detectionController = new Detection(undefined, this.user);
-    if (config && config.MAX_MINUTES_TIMEOUT_PER_CAMERA) {
-      this.maxMinutes = config.MAX_MINUTES_TIMEOUT_PER_CAMERA;
-    } else {
-      this.maxMinutes = 30;
-    }
-    if (config && config.MS_PER_PHOTO_CAMERA) {
-      this.cameraDelay = config.MS_PER_PHOTO_CAMERA;
-    } else {
-      this.cameraDelay = 500;
-    }
-    void this.init();
+    const vars = configController.get();
+    this.maxMinutes = vars.MAX_MINUTES_TIMEOUT_PER_CAMERA;
+    this.cameraDelay = vars.MS_PER_PHOTO_CAMERA;
   }
 
   async init(): Promise<void> {
@@ -216,10 +271,13 @@ export class DetectionWorker {
         await camera.connect();
       } catch (e) {
         const error = e as Error;
-        console.log(`Camera connecting error: ${error.message}`);
+        this.logs.send('connectError', {
+          cameraId: camera.id,
+          error: error.message,
+        });
       }
     }
-    void this.startWorker();
+    await this.startWorker();
   }
 
   async listenCamera(
@@ -232,8 +290,11 @@ export class DetectionWorker {
           try {
             await camera.connect();
           } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error(e);
+            const error = e as Error;
+            this.logs.send('connectError', {
+              cameraId: camera.id,
+              error: error.message,
+            });
           } finally {
             await this.listenCamera(
               camera,
@@ -247,15 +308,14 @@ export class DetectionWorker {
       } else {
         const photo = await camera.getSnapshot();
         let faces: FaceT[] = [];
-        console.log('Scanning...');
         try {
-          faces = await recognition.getFaces(
+          faces = await this.recognition.getFaces(
             photo.body,
             photo.headers['content-type'],
           );
         } catch (e) {
           const error = e as Error;
-          console.log(`Scanning error: ${error.message}`);
+          this.logs.send('recognitionError', { error: error.message });
         }
         for (const face of faces) {
           this.faceTasks.push({
@@ -278,7 +338,6 @@ export class DetectionWorker {
     const [personTask] = this.endTasks.filter(
       (endTask) => endTask.person.id === personFound.id,
     );
-    console.log(personTask, personFound.id);
     if (personTask) {
       await personTask.detection.update(now);
     } else {
@@ -315,6 +374,10 @@ export class DetectionWorker {
       });
     }
     await this.save(task, personFound);
+    this.logs.send('detectionFound', {
+      cameraId: task.camera.id,
+      personId: personFound.id,
+    });
   }
 
   setTasks(tasks: FaceTask[]): void {
@@ -329,7 +392,7 @@ export class DetectionWorker {
     if (!this.stopped) {
       if (this.faceTasks.length > 0) {
         const face = this.faceTasks.pop() as FaceTask;
-        console.log(`New task in camera ${face.camera.id}`);
+        this.logs.send('taskFound', { id: face.camera.id });
         this.detect(face).finally(() => {
           this.listenFaces();
         });
@@ -346,10 +409,14 @@ export class DetectionWorker {
       await this.listenCamera(camera);
     }
     this.listenFaces();
+    this.status = 'working';
+    this.logs.send('initWorker');
   }
 
   stopWorker(): void {
     this.stopped = true;
+    this.status = 'stopped';
+    this.logs.send('stopWorker');
   }
 
   restartWorker(keepTask = true): DetectionWorker {

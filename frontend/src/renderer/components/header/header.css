@@ -1,31 +1,56 @@
-.header{
-    clip-path: polygon(0 0, 100% 0, 89% 30%, 0% 100%);
-    background-color: white;
-    width: 100%;
-    min-height: 30vh;
-    position: relative;
-    top: 0;
-    left: 0;
+.header {
+  clip-path: polygon(0 0, 100% 0, 89% 30%, 0% 100%);
+  background-color: white;
+  width: 100%;
+  min-height: 30vh;
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
-.wrapper-header{
-    filter: drop-shadow(3px 4px 2px rgba(0, 0, 0, 0.178));
+.wrapper-header {
+  filter: drop-shadow(3px 4px 2px rgba(0, 0, 0, 0.178));
 }
 
-.header-bottom{
-    clip-path: polygon(0 0, 100% 0, 95% 30%, 0% 100%);
-    background-color: #eaf6ff;
-    width: 130%;
-    min-height: 50vh;
-    position: absolute;
-    top: 0%;
-    left: -30%;
+.header-bottom {
+  clip-path: polygon(0 0, 100% 0, 95% 30%, 0% 100%);
+  background-color: #eaf6ff;
+  width: 130%;
+  min-height: 50vh;
+  position: absolute;
+  top: 0%;
+  left: -30%;
 }
 
-.header-container{
-    position:fixed;
-    top:0;
-    left:0;
-    z-index:99;
-    width:100%;
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  width: 100%;
+}
+
+.logo-header {
+  position: absolute;
+  width: 8em;
+  height: 8em;
+  left: 2%;
+  top: 2%;
+
+  cursor: pointer;
+}
+
+.logo-header .logo {
+  fill: var(--color-secondary);
+}
+
+.logo-name {
+  position: absolute;
+  left: calc(2% + 4.2em);
+  top: calc(2% + 0.8em);
+  font-family: 'Lexend Light';
+}
+
+.logo-name strong {
+  color: var(--color-secondary);
 }

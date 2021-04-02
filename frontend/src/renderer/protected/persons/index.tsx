@@ -6,6 +6,7 @@ import {
   Card,
   Confirm,
   ConfirmProps,
+  ErrorBox,
   Gallery,
   Nav,
 } from '_/renderer/components';
@@ -16,8 +17,6 @@ import { faCircleNotch, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router';
 
 const { useState, useEffect } = React;
-
-const personController = new Person();
 
 interface DisplayPerson extends PersonData {
   images: string[];
@@ -32,6 +31,8 @@ function Persons(): JSX.Element {
   const [personsData, setPersonsData] = useState<DisplayPerson[]>([]);
   const [error, setError] = useState<Error>();
   const [confirm, setConfirm] = useState<ConfirmProps>();
+
+  const personController = new Person();
 
   function bufferToUrl(buffer: Buffer, mimetype = 'image/jpeg'): string {
     const base64 = btoa(
@@ -79,6 +80,15 @@ function Persons(): JSX.Element {
       <div className="persons-header">
         <h1>{t('persons.header')}</h1>
       </div>
+
+      {error && (
+        <ErrorBox
+          error={t('error.FAILED_LOADING_PERSONS')}
+          complete={error}
+          exitHandler={() => setError(undefined)}
+          className="error-loading-persons"
+        />
+      )}
 
       {confirm && (
         <Confirm
@@ -181,7 +191,7 @@ function Persons(): JSX.Element {
                   <Button
                     theme="primary"
                     content={t('persons.buttons.detections')}
-                    onClick={() => console.log('holi')}
+                    onClick={() => history.push(`/detection/${person.id}`)}
                   />
                 </Card>
               ))}

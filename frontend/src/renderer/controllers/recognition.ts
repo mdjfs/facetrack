@@ -4,7 +4,7 @@ import * as sharp from 'sharp';
 import { FaceDetection, SsdMobilenetv1Options } from 'face-api.js';
 import { ImageData } from 'canvas';
 
-import * as config from '../config.json';
+import Config from './config';
 
 const networks = {
   ssdMobilenetv1: path.join(__dirname, './networks/ssd_mobilenetv1'),
@@ -22,6 +22,8 @@ faceapi.env.monkeyPatch({
 });
 
 let loaded = false;
+
+const configController = new Config();
 
 async function loadModels() {
   await faceapi.nets.ssdMobilenetv1.loadFromDisk(networks.ssdMobilenetv1);
@@ -47,9 +49,8 @@ export class Recognition {
   minConfidence = 0.15;
 
   constructor() {
-    if (config && config.FACE_MIN_CONFIDENCE) {
-      this.minConfidence = config.FACE_MIN_CONFIDENCE;
-    }
+    const vars = configController.get();
+    this.minConfidence = vars.FACE_MIN_CONFIDENCE;
   }
 
   async init(): Promise<void> {

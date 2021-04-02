@@ -1,0 +1,99 @@
+.main-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    270deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  background-size: 400% 400%;
+
+  -webkit-animation: mainLoading 29s ease infinite;
+  -moz-animation: mainLoading 29s ease infinite;
+  animation: mainLoading 29s ease infinite;
+}
+
+@-webkit-keyframes mainLoading {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes mainLoading {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes mainLoading {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.logo-transparent .logo {
+  fill: rgba(255, 255, 255, 0.877);
+}
+
+.logo-transparent {
+  width: 12em;
+  height: 12em;
+  position: absolute;
+  left: calc(50vw - 6em);
+  top: calc(40vh - 6em);
+}
+
+.main-loading-message {
+  font-size: 2em;
+  position: absolute;
+  width: 100vw;
+  left: 0;
+  text-align: center;
+  top: calc(60vh - 2em);
+  color: rgba(255, 255, 255, 0.877);
+}
+
+.app-name {
+  margin: 1%;
+  color: white;
+  font-family: 'Lexend Light';
+}
+
+.app-name strong {
+  font-family: 'Lexend Bold';
+  color: white;
+}
+
+.github-user {
+  position: absolute;
+  left: 0;
+  bottom: 2%;
+  width: 100%;
+  text-align: center;
+  font-size: 1.25em;
+  color: white;
+  font-family: 'Lexend Bold';
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  background: none;
+}

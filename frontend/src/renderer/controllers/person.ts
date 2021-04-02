@@ -4,6 +4,7 @@ import { User } from './user';
 import * as config from '../config.json';
 import { DetectionFetch, Detection } from './detection';
 import { Camera } from './camera';
+import Config from './config';
 
 export interface PersonGeneralData {
   names: string;
@@ -21,6 +22,7 @@ export interface RegisteredFace extends FaceT {
 
 const auth = new Auth();
 const recognition = new Recognition();
+const configController = new Config();
 
 export class Person {
   id: number;
@@ -47,7 +49,8 @@ export class Person {
   ) {
     this.user = user || auth.getUser();
     if (data) this.chargeData(data);
-    this.maxRecognition = config.MAX_RECOGNITION_PER_PERSON;
+    const vars = configController.get();
+    this.maxRecognition = vars.MAX_RECOGNITION_PER_PERSON;
   }
 
   private chargeData(data: PersonData) {

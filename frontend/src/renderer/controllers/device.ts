@@ -146,10 +146,6 @@ class Device {
     this.store.set('devices-registered', []);
     this.store.set('devices-recorded', this.devices);
     this.store.set('devices-registered', this.devicesRegistered);
-
-    const one = this.store.get('devices-recorded', false);
-    const two = this.store.get('devices-registered', false);
-    console.log(one, this.devices);
   }
 
   getDeviceById(id: string): DeviceT | undefined {

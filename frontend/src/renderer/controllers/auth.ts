@@ -30,8 +30,10 @@ export type LoginAction =
 
 export { Auth };
 
+const mainStore = new Store();
+
 export default class Auth {
-  store = new Store();
+  store = mainStore;
 
   headers: Headers;
 
@@ -158,7 +160,17 @@ export default class Auth {
   }
 
   isLogged(): boolean {
-    return !!this.store.get('user-token', false) && !!this.store.get('user');
+    const token = this.store.get('user-token', false) as string;
+    const user = this.store.get('user', false) as User;
+    if (!user) return false;
+    if (!token) return false;
+    return true;
+  }
+
+  onChange(callback: CallableFunction): void {
+    this.store.onDidChange('user-token', () => {
+      callback();
+    });
   }
 
   getUser(): User {
@@ -175,5 +187,6 @@ export default class Auth {
 
   logout(): void {
     this.store.delete('user-token');
+    this.store.delete('user');
   }
 }

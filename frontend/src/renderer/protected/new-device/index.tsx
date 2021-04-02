@@ -20,10 +20,9 @@ import { useHistory } from 'react-router';
 import { DeviceT, Device } from '_/renderer/controllers/device';
 import { Camera, DemoCamera } from '_/renderer/controllers/camera';
 import Select from 'react-select';
+import { restartWorker } from '_/renderer/renderer';
 
 const { useState, useEffect } = React;
-const deviceController = new Device();
-const cameraController = new Camera();
 
 interface NewDeviceProps {
   paramId: string;
@@ -48,6 +47,9 @@ type CameraOptions = {
 
 function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
   const { t } = useTranslation();
+
+  const deviceController = new Device();
+  const cameraController = new Camera();
 
   const [profiles, setProfiles] = useState<ProfileT[]>([]);
   const [error, setError] = useState<Error>();
@@ -83,6 +85,7 @@ function NewDevice({ paramId }: NewDeviceProps): JSX.Element {
           );
           setCamera(undefined);
           setNotice(t('newDevice.success.added'));
+          void restartWorker();
         } else if (oldCamera !== 0) {
           const [prevCamera] = camera.cameras.filter(
             (value) => value.id === oldCamera,

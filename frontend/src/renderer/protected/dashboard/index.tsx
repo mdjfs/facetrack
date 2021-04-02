@@ -10,8 +10,8 @@ import {
   Nav,
 } from '_/renderer/components';
 import {
+  faCircleNotch,
   faPlusSquare,
-  faSpinner,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
@@ -20,11 +20,10 @@ import Camera from '_/renderer/controllers/camera';
 import './dashboard.css';
 import { cancelable } from 'cancelable-promise';
 
-const cameraController = new Camera();
-
 const { useState, useEffect } = React;
 
 function Dashboard(): JSX.Element {
+  const cameraController = new Camera();
   const [cameras, setCameras] = useState<Camera[]>([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setLoading] = useState(false);
@@ -89,7 +88,13 @@ function Dashboard(): JSX.Element {
       )}
       {!focusedCamera && (
         <div className="dash-cards">
-          {isLoading && <FontAwesomeIcon icon={faSpinner} spin />}
+          {isLoading && (
+            <FontAwesomeIcon
+              className="cameras-loading"
+              icon={faCircleNotch}
+              spin
+            />
+          )}
           {!isLoading &&
             cameras.length > 0 &&
             cameras.map((camera) => (

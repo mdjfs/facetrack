@@ -1,5 +1,4 @@
 {
-
   "confirm": {
     "cancel": "Cancel",
     "ok": "Ok"
@@ -113,13 +112,16 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "persons": "My Persons"
+    "persons": "My Persons",
+    "detections": "Detections",
+    "logs": "Logs"
   },
   "persons": {
     "header": "Your Persons",
     "list": {
       "names": "Names",
-      "surnames": "Surnames"
+      "surnames": "Surnames",
+      "unknown": "Unknown Person"
     },
     "choices": {
       "known": "Known",
@@ -144,5 +146,29 @@
     },
     "selectFaces": "Select Faces",
     "deleteFace": "Are you sure to delete this face?"
+  },
+  "detections": {
+    "header": "Detections",
+    "list": {
+      "person": "Person names",
+      "camera": "Camera name",
+      "since": "Since",
+      "until": "Until",
+      "unknown": "Unkown Person"
+    },
+    "buttons": {
+      "see": "See Faces"
+    }
+  },
+  "load": {
+    "message": "Loading..."
+  },
+  "logs": {
+    "initWorker": "Starting worker...",
+    "taskFound": "New task in camera id: {{id}}",
+    "stopWorker": "Worker stopped",
+    "detectionFound": "New detection in camera id: {{cameraId}} and detected person id: {{personId}}",
+    "recognitionError": "Error getting faces, message: {{error}}",
+    "connectError": "Error connecting in camera id: {{camerId}} message: {{error}}"
   }
 }

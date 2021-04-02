@@ -1,14 +1,178 @@
 {
-  "inputs":{
-    "user":{
-      "name":"Cual es tu nombre de Usuario?",
-      "placeholder":"Ej. Guru99",
-      "validatorMessage":"I dont know"
+  "confirm": {
+    "cancel": "Cancelar",
+    "ok": "Ok"
+  },
+  "login": {
+    "inputs": {
+      "user": {
+        "name": "Identidad",
+        "placeholder": "Ingresa tu usuario o correo electronico"
+      },
+      "password": {
+        "name": "Contraseña",
+        "placeholder": "Ingresa tu contraseña"
+      }
     },
-    "password":{
-      "name":"Your password",
-      "placeholder":"Make it safe!",
-      "validatorMessage":"I dont know"
+    "buttons": {
+      "login": "Entra en tu cuenta",
+      "register": "Crea una nueva cuenta"
     }
+  },
+  "register": {
+    "inputs": {
+      "names": {
+        "name": "Nombres",
+        "placeholder": "Ejemplo: John Debian"
+      },
+      "surnames": {
+        "name": "Apellidos",
+        "placeholder": "Ejemplo: Smith Williams"
+      },
+      "user": {
+        "name": "¿Cual es tu nombre de usuario?",
+        "placeholder": "Ejemplo: Guru99",
+        "validatorMessage": "El usuario solo puede tener caracteres alfanumericos y piso entre el nombre"
+      },
+      "email": {
+        "name": "Escribre tu correo",
+        "placeholder": "Ejemplo: yoda@cooldomain.com",
+        "validatorMessage": "¡Ingresa un correo valido!"
+      },
+      "password": {
+        "name": "Tu contraseña",
+        "placeholder": "¡Hazla segura!",
+        "validatorMessage": "Minimo 8 caracteres, al menos una letra y un numero"
+      }
+    },
+    "buttons": {
+      "register": "Crea una nueva cuenta"
+    }
+  },
+  "home": {
+    "buttons": {
+      "join": "Entra en tu cuenta",
+      "continue": "Continua como invitado"
+    },
+    "link": {
+      "new": "Nuevo aqui?"
+    }
+  },
+  "error": {
+    "LOGIN_FAILED": "Autenticacion fallida. ¿Estas seguro de que tus credenciales son correctas?",
+    "SHOW_DETAILS_MSG": "Ver detalles",
+    "NO_DEVICES": "No se encontro equipos.",
+    "NO_PROFILES": "No se encontro perfiles.",
+    "NO_DEVICE": "No se encontro el equipo."
+  },
+  "dashboard": {
+    "header": "Tus camaras",
+    "deleteConfirm": "¿Estas seguro de borrar esta camara? ALERTA: Las detecciones ligadas a esta camara se borraran"
+  },
+  "detect": {
+    "header": "Registra equipos",
+    "buttons": {
+      "detect": "Detectar equipos ONVIF",
+      "register": "Registrar equipo",
+      "refresh": "Recargar"
+    },
+    "device": {
+      "name": "Nombre",
+      "hardware": "Modelo",
+      "location": "Direccion",
+      "address": "Direccion IP"
+    }
+  },
+  "newDevice": {
+    "header": "Selecciona un Perfil",
+    "inputs": {
+      "user": {
+        "name": "Usuario",
+        "placeholder": "Ingresa el usuario del equipo onvif"
+      },
+      "pass": {
+        "name": "Contraseña",
+        "placeholder": "Ingresa la contraseña del equipo onvif"
+      },
+      "camera": {
+        "name": "Nombre de la camara",
+        "placeholder": "Ejemplo: Cocina"
+      }
+    },
+    "buttons": {
+      "auth": "Conectar",
+      "registerCamera": "Registrar Camara",
+      "camera": "Registrar"
+    },
+    "profilesFound": "{{number}} Perfiles encontrados",
+    "createOr": "O selecciona una camara para reemplazar su fuente de video"
+  },
+  "nav": {
+    "dashboard": "Inicio",
+    "persons": "Mis Personas",
+    "detections": "Detecciones",
+    "logs": "Historial",
+    "config": "Configuracion"
+  },
+  "persons": {
+    "header": "Tus Personas",
+    "list": {
+      "names": "Nombres",
+      "surnames": "Apellidos",
+      "unknown": "Persona Desconocida"
+    },
+    "choices": {
+      "known": "Conocidos",
+      "unknown": "Desconocidos"
+    },
+    "buttons": {
+      "edit": "Editar",
+      "create": "Crear",
+      "register": "Registrar",
+      "detections": "Mirar detecciones"
+    },
+    "deleteConfirm": "¿Estas seguro de borrar a esta persona?"
+  },
+  "personDetail": {
+    "names": "Ingresa nombres",
+    "surnames": "Ingresa apellidos",
+    "buttons": {
+      "add": "Añadir",
+      "register": "Registrar",
+      "update": "Actualizar",
+      "loadFaces": "Guardar Caras"
+    },
+    "selectFaces": "Seleccionar Caras",
+    "deleteFace": "¿Estas seguro que quieres borrar esta cara?"
+  },
+  "detections": {
+    "header": "Detecciones",
+    "list": {
+      "person": "Nombres de la Persona",
+      "camera": "Nombre de la Camara",
+      "since": "Desde",
+      "until": "Hasta",
+      "unknown": "Persona Desconocida"
+    },
+    "buttons": {
+      "see": "Mirar caras"
+    }
+  },
+  "load": {
+    "message": "Cargando..."
+  },
+  "logs": {
+    "initWorker": "Iniciando el proceso de deteccion...",
+    "taskFound": "Nueva cara en la camara identificada con el numero: {{id}}",
+    "stopWorker": "Proceso de deteccion detenido",
+    "detectionFound": "Nueva deteccion en la camara identificada con el numero: {{cameraId}} y la identificacion de la persona detectada: {{personId}}",
+    "recognitionError": "Error reconociendo caras, mensaje: {{error}}",
+    "connectError": "Error conectando en la camara identificada con el numero: {{camerId}} mensaje: {{error}}"
+  },
+  "config": {
+    "english": "Ingles",
+    "spanish": "Español",
+    "selectLanguage": "Seleccionar idioma",
+    "save": "Guardar configuracion"
   }
 }

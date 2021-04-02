@@ -3,14 +3,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import * as translation_en from './en/translation.json';
+import * as translationEn from './en/translation.json';
+import * as translationEs from './es/translation.json';
 
 const resources = {
   en: {
-    translation: translation_en,
+    translation: translationEn,
+  },
+  es: {
+    translation: translationEs,
   },
 } as const;
-
 
 i18n.use(initReactI18next).init({
   lng: 'en',

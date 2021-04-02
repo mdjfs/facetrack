@@ -9,13 +9,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 import { DeviceT, Device } from '_/renderer/controllers/device';
+import { cancelable } from 'cancelable-promise';
 
 const { useState, useEffect } = React;
-const deviceController = new Device();
 
 function Detect(): JSX.Element {
   const { t } = useTranslation();
 
+  const deviceController = new Device();
   const [devices, setDevices] = useState<DeviceT[]>([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setLoading] = useState(false);
@@ -40,7 +41,10 @@ function Detect(): JSX.Element {
   }
 
   useEffect(() => {
-    void loadDevices();
+    const promise = cancelable(loadDevices());
+    return () => {
+      promise.cancel();
+    };
   }, []);
 
   return (

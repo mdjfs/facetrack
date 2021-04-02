@@ -34,8 +34,6 @@ interface newPersonProps {
 
 const { useState, useEffect, useRef } = React;
 
-const recognition = new Recognition();
-
 function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
   const { t } = useTranslation();
   const [isLoading, setLoading] = useState(false);
@@ -47,6 +45,8 @@ function PersonDetail(props: DetailProps | newPersonProps): JSX.Element {
   const [names, setNames] = useState<string>();
   const [surnames, setSurnames] = useState<string>();
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const recognition = new Recognition();
 
   async function process(processAsync: () => Promise<void>): Promise<void> {
     setLoading(true);

@@ -1,0 +1,50 @@
+.scroll-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+
+.detections-header {
+  width: 80%;
+  left: 10%;
+  border-bottom: solid 2px rgba(128, 128, 128, 0.151);
+  position: relative;
+  text-align: center;
+  font-size: 0.8em;
+  color: black;
+}
+
+.error-loading-detections {
+  width: 76% !important;
+  left: 10%;
+  position: relative;
+  margin-top: 2%;
+}
+
+.detections-header h1 {
+  margin-bottom: 0px;
+  font-weight: lighter;
+}
+
+.detections-loading {
+  width: 100%;
+  top: 40%;
+  font-size: 2em;
+  text-align: center;
+  position: absolute;
+  color: #32aaf8;
+  left: 50%;
+}
+
+.detections-body {
+  position: relative;
+  left: 10%;
+  width: 60%;
+  text-align: center;
+  padding: 10%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}

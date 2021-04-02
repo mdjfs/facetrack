@@ -26,6 +26,22 @@ function Nav(): JSX.Element {
       name: t('nav.persons'),
       link: '/persons',
     },
+    {
+      name: t('nav.detections'),
+      link: '/detections',
+    },
+    {
+      name: t('nav.logs'),
+      link: '/logs',
+    },
+    {
+      name: t('nav.config'),
+      link: '/config',
+    },
+    {
+      name: t('nav.logout'),
+      link: '/logout',
+    },
   ];
   if (!isOpen) {
     return (

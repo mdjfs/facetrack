@@ -109,3 +109,10 @@ ul {
 li {
   margin: 1%;
 }
+
+.error-loading-persons {
+  width: 76% !important;
+  left: 10%;
+  position: relative;
+  margin-top: 2%;
+}
