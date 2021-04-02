@@ -12,7 +12,6 @@ interface DetectionData {
   until: Date;
   cameraId: number;
   personId: number;
-  registered: boolean;
 }
 
 async function create(data: DetectionData) {
@@ -21,7 +20,6 @@ async function create(data: DetectionData) {
     until: data.until,
     cameraId: data.cameraId,
     personId: data.personId,
-    registered: data.registered,
   });
   return detection;
 }
@@ -35,7 +33,10 @@ async function get(id: number) {
 }
 
 async function getPersonDetections(personId: number) {
-  return await Detection.findAll({ where: { personId: personId } });
+  return await Detection.findAll({
+    where: { personId: personId },
+    order: [["id", "DESC"]],
+  });
 }
 
 async function getAll(
@@ -49,10 +50,12 @@ async function getAll(
       offset: offset,
       limit: pageSize,
       include: { model: Person, where: { userId: userTarget.id } },
+      order: [["id", "DESC"]],
     });
   } else
     return await Detection.findAll({
       include: { model: Person, where: { userId: userTarget.id } },
+      order: [["id", "DESC"]],
     });
 }
 

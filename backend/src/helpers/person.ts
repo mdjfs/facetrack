@@ -10,6 +10,7 @@ const { Person } = models;
 interface PersonData {
   names: string;
   surnames: string;
+  registered: boolean;
 }
 
 async function find(
@@ -49,7 +50,7 @@ async function create(person: PersonData, user: UserTarget) {
     names: person.names,
     surnames: person.surnames,
     userId: user.id,
-    registered: true,
+    registered: person.registered,
   });
 }
 
@@ -59,7 +60,11 @@ async function del(id: number, user: UserTarget) {
 
 async function update(id: number, person: PersonData, user: UserTarget) {
   await Person.update(
-    { names: person.names, surnames: person.surnames, registered: true },
+    {
+      names: person.names,
+      surnames: person.surnames,
+      registered: person.registered,
+    },
     { where: { id: id, userId: user.id } }
   );
 }
@@ -69,7 +74,10 @@ async function get(id: number, user: UserTarget) {
 }
 
 async function getAll(user: UserTarget) {
-  return await Person.findAll({ where: { userId: user.id } });
+  return await Person.findAll({
+    where: { userId: user.id },
+    order: [["id", "DESC"]],
+  });
 }
 
 export { create, del, update, find, get, PersonData, getAll };
