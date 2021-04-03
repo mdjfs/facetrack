@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router';
 import {
   Button,
@@ -11,6 +11,7 @@ import {
   Presentation,
 } from '../../components';
 import { Auth as AuthController, RegisterState } from '../../controllers/auth';
+import './register.css';
 
 import * as config from '../../config.json';
 
@@ -47,12 +48,18 @@ function Register(): JSX.Element {
     <>
       <Header />
       <Presentation>
-        {isLoading && <FontAwesomeIcon icon={faSpinner} spin />}
+        {isLoading && (
+          <FontAwesomeIcon
+            className="register-loading"
+            icon={faCircleNotch}
+            spin
+          />
+        )}
         {!isLoading && (
           <>
             {error && (
               <ErrorBox
-                error={t('error.LOGIN_FAILED')}
+                error={t('error.REGISTER_FAILED')}
                 complete={error}
                 exitHandler={() => setError(undefined)}
               />

@@ -3,6 +3,7 @@ const lodash = require('lodash');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const webpack = require('webpack');
 
 function srcPaths(src) {
   return path.join(__dirname, src);
@@ -13,9 +14,6 @@ const isEnvDevelopment = process.env.NODE_ENV === 'development';
 
 // #region Common settings
 const commonConfig = {
-  externals: {
-    sharp: 'commonjs sharp',
-  },
   devtool: isEnvDevelopment ? 'source-map' : false,
   mode: isEnvProduction ? 'production' : 'development',
   output: {
@@ -90,6 +88,9 @@ mainConfig.plugins = [
         to: 'networks/',
       },
     ],
+  }),
+  new webpack.DefinePlugin({
+    'process.browser': 'true',
   }),
 ];
 

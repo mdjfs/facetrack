@@ -5,6 +5,7 @@ import * as config from '../config.json';
 import { DetectionFetch, Detection } from './detection';
 import { Camera } from './camera';
 import Config from './config';
+import { restartWorker } from '../renderer';
 
 export interface PersonGeneralData {
   names: string;
@@ -242,6 +243,7 @@ export class Person {
       const text = await response.text();
       throw new Error(text);
     }
+    await restartWorker();
   }
 
   async update(data: PersonGeneralData): Promise<void> {
@@ -254,6 +256,7 @@ export class Person {
       const text = await response.text();
       throw new Error(text);
     }
+    await restartWorker();
   }
 
   async create(data: PersonGeneralData): Promise<Person> {
@@ -268,6 +271,7 @@ export class Person {
     } else {
       const json: PersonData = (await response.json()) as PersonData;
       const person = new Person(json, this.user);
+      await restartWorker();
       return person;
     }
   }

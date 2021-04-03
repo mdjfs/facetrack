@@ -1,0 +1,199 @@
+body {
+  background-color: #102c54;
+}
+
+.logo-header {
+  width: 8rem;
+  position: relative;
+  top: 2rem;
+  left: 5%;
+  height: 8rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.logo-header .logo {
+  fill: rgba(255, 255, 255, 0.836);
+}
+
+.logo-header-text {
+  display: inline-block;
+  position: relative;
+  top: 2rem;
+  left: 8%;
+  font-size: 2rem;
+  color: white;
+  font-family: "Lexend Light";
+}
+
+.logo-header-text strong {
+  font-family: "Lexend";
+  color: rgba(255, 255, 255, 0.863);
+}
+
+.logo-header-beta {
+  font-family: "Lexend Bold";
+  color: #102c54;
+  background-color: white;
+  border-radius: 5px;
+  position: relative;
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: 2.75rem;
+  display: inline-block;
+  top: 4rem;
+}
+
+.gif-demo {
+  width: 80%;
+  left: 10%;
+  margin-top: 8rem;
+  position: relative;
+  display: block;
+  box-shadow: 1px 1px 10px 0px black;
+}
+
+.gif-header {
+  color: #102c54;
+  font-family: "Lexend Light";
+  left: 10%;
+  width: 80%;
+  position: relative;
+  display: block;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+.gif-sub-header {
+  color: #102c54;
+  font-family: "Lexend";
+  left: 10%;
+  width: 80%;
+  position: relative;
+  display: block;
+  text-align: right;
+  font-size: 1.2rem;
+}
+
+.page-body {
+  background-color: rgba(255, 255, 255, 0.911);
+  padding-top: 10rem;
+  margin-top: -10rem;
+  padding-bottom: 5rem;
+}
+
+.explain {
+  width: 70%;
+  left: 10%;
+  position: relative;
+  border: #102c54 solid 2px;
+  padding: 5%;
+  margin-top: 20%;
+}
+
+.explain h1 {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #102c54;
+}
+
+.explain h3 {
+  font-size: 1rem;
+  text-align: center;
+  color: #102c54;
+}
+
+.explain p {
+  font-size: 1rem;
+  text-align: justify;
+  color: black;
+}
+
+.explain {
+  text-align: center;
+}
+
+.blueButton {
+  background-color: #102c54;
+  color: white;
+  padding: 2%;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px 1px black;
+  cursor: pointer;
+  transition: all 0.5s;
+}
+
+.blueButton:hover {
+  background: none;
+  color: #102c54;
+  box-shadow: none;
+  border: #102c54 solid 1px;
+}
+
+.whiteButton {
+  background-color: white;
+  color: #102c54;
+  padding: 2%;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px 1px black;
+  cursor: pointer;
+  transition: all 0.5s;
+}
+
+.whiteButton:hover {
+  background: none;
+  color: white;
+  box-shadow: none;
+  border: white solid 1px;
+}
+
+.videoDemo {
+  margin-top: 10%;
+  position: relative;
+  left: 0%;
+  width: 100%;
+  text-align: center;
+}
+
+.videoDemo h1 {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #102c54;
+}
+
+.videoDemo iframe {
+  width: 95vw;
+  height: 95vw;
+  border: none;
+}
+
+.download {
+  padding: 10%;
+  width: 80%;
+  left: 0;
+  position: relative;
+  text-align: center;
+}
+
+.download button {
+  transform: scale(1.5);
+}
+
+@media (orientation: landscape) {
+  .videoDemo iframe {
+    width: 50vw;
+    height: 30vw;
+  }
+}
+
+.download a {
+  display: block;
+  padding: 10%;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Lexend Bold";
+}

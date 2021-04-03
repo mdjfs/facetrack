@@ -23,13 +23,20 @@
     },
     "win": {
       "target": "nsis",
-      "asar": true
+      "asar": false,
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico"
     },
-    "buildVersion": "0"
+    "buildVersion": "0",
+    "extraFiles": [{
+      "from": "./package-bad-copy-but-easy-fix.json",
+      "to": "./package.json"
+    }]
   },
   "author": "Marcos Fuenmayor",
   "license": "MIT",
@@ -46,6 +53,7 @@
     "electron-store": "^7.0.2",
     "face-api.js": "^0.22.2",
     "i18next": "^19.9.2",
+    "jimp": "^0.16.1",
     "json-loader": "^0.5.7",
     "node-loader": "^1.0.2",
     "node-onvif": "^0.1.7",
@@ -57,9 +65,7 @@
     "react-i18next": "^11.8.10",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-select": "^4.3.0",
-    "sharp": "^0.27.2",
-    "typedarray-to-buffer": "^3.1.5"
+    "react-select": "^4.3.0"
   },
   "devDependencies": {
     "@types/mocha": "^8.2.0",

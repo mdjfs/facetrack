@@ -18,7 +18,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Home, Load, Login, Register } from './public';
 
-import { Auth } from './controllers/auth';
 import {
   ConfigPage,
   Dashboard,
@@ -32,6 +31,7 @@ import {
 import { User } from './controllers/user';
 import { DetectionWorker } from './controllers/detection';
 import Config from './controllers/config';
+import { Auth } from './controllers/auth';
 
 const configController = new Config();
 

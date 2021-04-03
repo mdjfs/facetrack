@@ -1,0 +1,12 @@
+{
+  "header": "Imagine this face tracking... but now, integrated with your home security cameras",
+  "subHeader": "Oh, and: free software",
+  "explainTitle": "I see you scrolled, you liked the idea!",
+  "explainSubtitle": "Read how that works:",
+  "explainBody": "If you have security devices (cameras or dvr) in comfort with ONVIF standart (more info see https://www.onvif.org) you can start tracking all faces captured by your devices with facetrack. That app will recognize the faces and show you any detection and the person related",
+  "haveOnvif": "Check if you have ONVIF devices",
+  "videoDemo": "Demostration",
+  "videoDemoLink": "https://www.youtube.com/embed/noLgfwxuHkI",
+  "download": "Download for Windows",
+  "downloadLink": "https://www.google.com/"
+}

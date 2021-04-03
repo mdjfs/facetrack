@@ -52,17 +52,24 @@
   "home": {
     "buttons": {
       "join": "Join in your account",
-      "continue": "Continue as guest"
+      "continue": "Continue as guest",
+      "demo": "See demo video"
     },
     "link": {
       "new": "New here?"
-    }
-  },
-  "routes": {
-    "dashboard": "Dashboard"
+    },
+    "explain": "If you have security devices (cameras or dvr) in comfort with ONVIF standart (more info see https://www.onvif.org) you can start tracking all faces captured by your devices with facetrack. That app will recognize the faces and show you any detection and the person related",
+    "continueAlert": "If you continue as guest and change your PC or log out of your account, your data will be lost",
+    "videoDemoLink": "https://www.youtube.com/embed/noLgfwxuHkI"
   },
   "error": {
     "LOGIN_FAILED": "Authentication failed. Are you sure if the credentials are correct?",
+    "REGISTER_FAILED": "Register failed failed. Try with another user or email",
+    "FAILED_LOADING_CAMERAS": "Failed loading cameras",
+    "FAILED_LOADING_DETECTIONS": "Failed loading detections",
+    "DEVICE_AUTH_ERROR": "Authentication with ONVIF device failed. Are you sure if the credentials are correct?",
+    "FAILED_LOADING_PERSON_DETAIL": "Failed loading details of person",
+    "FAILED_LOADING_PERSONS": "Failed loading persons",
     "SHOW_DETAILS_MSG": "See details",
     "NO_DEVICES": "No devices found.",
     "NO_PROFILES": "No profiles found.",
@@ -100,6 +107,10 @@
       "camera": {
         "name": "Camera name",
         "placeholder": "Example: Kitchen"
+      },
+      "success": {
+        "added": "New camera added",
+        "replaced": "Source of camera replaced"
       }
     },
     "buttons": {
@@ -114,7 +125,9 @@
     "dashboard": "Dashboard",
     "persons": "My Persons",
     "detections": "Detections",
-    "logs": "Logs"
+    "logs": "Logs",
+    "config": "Configuration",
+    "logout": "Logout"
   },
   "persons": {
     "header": "Your Persons",
@@ -170,5 +183,11 @@
     "detectionFound": "New detection in camera id: {{cameraId}} and detected person id: {{personId}}",
     "recognitionError": "Error getting faces, message: {{error}}",
     "connectError": "Error connecting in camera id: {{camerId}} message: {{error}}"
+  },
+  "config": {
+    "selectLanguage": "Select language",
+    "spanish": "Spanish",
+    "english": "English",
+    "save": "Load config"
   }
 }

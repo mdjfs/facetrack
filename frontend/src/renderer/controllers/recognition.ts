@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as faceapi from 'face-api.js';
-import * as sharp from 'sharp';
+import Jimp from 'jimp';
 import { FaceDetection, SsdMobilenetv1Options } from 'face-api.js';
 import { ImageData } from 'canvas';
 
@@ -162,14 +162,9 @@ export class Recognition {
     width = Math.trunc(width + framewidth);
     height = Math.trunc(height + frameheight);
 
-    const img: sharp.Sharp = sharp(image);
-    const extract: sharp.Sharp = img.extract({
-      width,
-      height,
-      left: x,
-      top: y,
-    });
-    const buffer: Buffer = await extract.toBuffer();
+    const img = await Jimp.read(image);
+    const extract = img.crop(x, y, width, height);
+    const buffer: Buffer = await extract.getBufferAsync(opts.mimetype);
 
     return {
       buffer,

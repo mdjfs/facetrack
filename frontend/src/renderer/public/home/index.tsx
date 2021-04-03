@@ -42,27 +42,52 @@ function Home(): JSX.Element {
           content={t('home.buttons.continue')}
           onClick={() => {
             setModal(
-              <>
+              <div className="guestAlert">
                 {t('home.continueAlert')}
                 <br />
                 <Button
                   theme="secondary"
                   content={t('home.buttons.continue')}
                   onClick={async () => {
-                    setModal(<FontAwesomeIcon icon={faCircleNotch} spin />);
+                    setModal(
+                      <div className="guestAlert">
+                        <FontAwesomeIcon
+                          className="guest-loading"
+                          icon={faCircleNotch}
+                          spin
+                        />
+                      </div>,
+                    );
                     await auth.guest();
                     history.push('/dashboard');
                     window.location.reload();
                   }}
                 />
-              </>,
+              </div>,
             );
           }}
         />
         <CustomLink
           className="link-right"
           content={t('home.link.new')}
-          onClick={() => setModal(<div>Test</div>)}
+          onClick={() => {
+            setModal(
+              <div className="newInfo">
+                {t('home.explain')}
+                <Button
+                  theme="secondary"
+                  content={t('home.buttons.demo')}
+                  onClick={() => {
+                    setModal(
+                      <div className="newInfo video">
+                        <iframe src={t('home.videoDemoLink')} title="Demo" />
+                      </div>,
+                    );
+                  }}
+                />
+              </div>,
+            );
+          }}
         />
       </Presentation>
     </>

@@ -4,6 +4,7 @@ import * as config from '../config.json';
 import Auth from './auth';
 import { User } from './user';
 import { DeviceT, RegisteredT, Device } from './device';
+import { restartWorker } from '../renderer';
 
 const auth = new Auth();
 
@@ -107,6 +108,7 @@ class Camera {
       const text = await response.text();
       throw new Error(text);
     }
+    await restartWorker();
   }
 
   async create(name: string): Promise<Camera> {
@@ -123,6 +125,7 @@ class Camera {
     } else {
       const json: CameraData = (await response.json()) as CameraData;
       const camera = new Camera(json, this.user);
+      await restartWorker();
       return camera;
     }
   }

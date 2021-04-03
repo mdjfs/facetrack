@@ -168,7 +168,7 @@ export default class Auth {
   }
 
   onChange(callback: CallableFunction): void {
-    this.store.onDidChange('user-token', () => {
+    this.store.onDidChange('user', () => {
       callback();
     });
   }

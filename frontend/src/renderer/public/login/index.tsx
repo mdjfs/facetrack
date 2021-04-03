@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 
@@ -55,7 +55,13 @@ function Login(): JSX.Element {
     <>
       <Header />
       <Presentation>
-        {isLoading && <FontAwesomeIcon icon={faSpinner} spin />}
+        {isLoading && (
+          <FontAwesomeIcon
+            className="login-loading"
+            icon={faCircleNotch}
+            spin
+          />
+        )}
         {!isLoading && (
           <>
             {error && (

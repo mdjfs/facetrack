@@ -52,18 +52,28 @@
   "home": {
     "buttons": {
       "join": "Entra en tu cuenta",
-      "continue": "Continua como invitado"
+      "continue": "Continua como invitado",
+      "demo": "Ver video de demostracion"
     },
     "link": {
       "new": "Nuevo aqui?"
-    }
+    },
+    "explain": "Si tienes equipos (camaras o dvr) que cumplan con el estandar ONVIF (mas informacion en https://www.onvif.org) puedes empezar reconociendo todas las caras con facetrack. Esta aplicacion reconocera las caras y te mostrara las detecciones con su persona relacionada",
+    "continueAlert": "Si continuas como invitado y cambias la PC o te desconectas, perderas tus datos",
+    "videoDemoLink": "https://www.youtube.com/embed/noLgfwxuHkI"
   },
   "error": {
     "LOGIN_FAILED": "Autenticacion fallida. ¿Estas seguro de que tus credenciales son correctas?",
     "SHOW_DETAILS_MSG": "Ver detalles",
     "NO_DEVICES": "No se encontro equipos.",
     "NO_PROFILES": "No se encontro perfiles.",
-    "NO_DEVICE": "No se encontro el equipo."
+    "NO_DEVICE": "No se encontro el equipo.",
+    "REGISTER_FAILED": "Registro fallido. ¿Por que no intentar con otro usuario o correo?",
+    "FAILED_LOADING_CAMERAS": "Error cargando las camaras",
+    "FAILED_LOADING_DETECTIONS": "Error cargando las detecciones",
+    "DEVICE_AUTH_ERROR": "Autenticacion con el equipo ONVIF fallida. ¿Estas seguro de que tus credenciales son correctas?",
+    "FAILED_LOADING_PERSON_DETAIL": "Error cargando los detalles de la persona",
+    "FAILED_LOADING_PERSONS": "Error cargando las camaras"
   },
   "dashboard": {
     "header": "Tus camaras",
@@ -105,14 +115,19 @@
       "camera": "Registrar"
     },
     "profilesFound": "{{number}} Perfiles encontrados",
-    "createOr": "O selecciona una camara para reemplazar su fuente de video"
+    "createOr": "O selecciona una camara para reemplazar su fuente de video",
+    "success": {
+      "added": "Nueva camara agregada",
+      "replaced": "Video de la camara reemplazado"
+    }
   },
   "nav": {
     "dashboard": "Inicio",
     "persons": "Mis Personas",
     "detections": "Detecciones",
     "logs": "Historial",
-    "config": "Configuracion"
+    "config": "Configuracion",
+    "logout": "Desconectarse"
   },
   "persons": {
     "header": "Tus Personas",

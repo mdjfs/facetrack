@@ -1,0 +1,12 @@
+{
+  "header": "Imagina este reconocimiento facial... Pero ahora, integrado en tus camaras de seguridad",
+  "subHeader": "Ah, y software libre",
+  "explainTitle": "Oh, bajaste ¿te gusta la idea?",
+  "explainSubtitle": "Mira como funciona:",
+  "explainBody": "Si tienes equipos (camaras o dvr) que cumplan con el estandar ONVIF (mas informacion en https://www.onvif.org) puedes empezar reconociendo todas las caras con facetrack. Esta aplicacion reconocera las caras y te mostrara las detecciones con su persona relacionada",
+  "haveOnvif": "Chequea aqui si tienes equipos ONVIF",
+  "videoDemo": "Demostracion",
+  "videoDemoLink": "https://www.youtube.com/embed/noLgfwxuHkI",
+  "download": "Descargar para Windows",
+  "downloadLink": "https://www.google.com/"
+}

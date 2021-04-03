@@ -1,6 +1,16 @@
-.left-button{
-    bottom: 5%;
-    position: fixed;
-    left: -16%;
-    width: 150%;
+.left-button {
+  bottom: 5%;
+  position: fixed;
+  left: -16%;
+  width: 150%;
+}
+
+.login-loading {
+  padding: 10%;
+  text-align: center;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--color-primary);
+  font-size: 2em;
 }

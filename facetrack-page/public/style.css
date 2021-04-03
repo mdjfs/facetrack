@@ -1,0 +1,53 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+@font-face {
+  font-family: "Lexend Bold";
+  src: url(fonts/lexend-bold-webfont.woff);
+}
+
+@font-face {
+  font-family: "Lexend Extra Bold";
+  src: url(fonts/lexend-extrabold-webfont.woff);
+}
+
+@font-face {
+  font-family: "Lexend Light";
+  src: url(fonts/lexend-light-webfont.woff);
+}
+
+@font-face {
+  font-family: "Lexend Medium";
+  src: url(fonts/lexend-medium-webfont.woff);
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url(fonts/lexend-regular-webfont.woff);
+}
+
+@font-face {
+  font-family: "Lexend Semi Bold";
+  src: url(fonts/lexend-semibold-webfont.woff);
+}
+
+@font-face {
+  font-family: "Lexend Thin";
+  src: url(fonts/lexend-thin-webfont.woff);
+}
+
+* {
+  font-family: "Lexend";
+}
+
+* {
+  outline: none;
+}
+
+:root {
+  --color-primary: #32aaf8;
+  --color-secondary: #b1e0fe;
+  --color-tertiary: #94d3fc;
+}
